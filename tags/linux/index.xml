@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
-    <title>Anqi Ma</title>
-    <link>http://maanqi4.github.io/</link>
-    <description>Recent content on Anqi Ma</description>
+    <title>Linux on Anqi Ma</title>
+    <link>http://maanqi4.github.io/tags/linux/</link>
+    <description>Recent content in Linux on Anqi Ma</description>
     <image>
       <title>Anqi Ma</title>
       <url>http://maanqi4.github.io/papermod-cover.png</url>
@@ -11,7 +11,7 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 13 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>[Linux] Generate Short/Long PPE with CESM</title>
       <link>http://maanqi4.github.io/posts/short-long-experiment-outline/</link>
@@ -30,8 +30,6 @@ CICE%PRES: prescribed sea ice
 DOCN%DOM: DOCN data ocean mode
 RTM: river transport model, land river runoff</description>
     </item>
-    
-    
     
   </channel>
 </rss>
