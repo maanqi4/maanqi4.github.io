@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>[Linux] Generate Short/Long PPE with CESM | Anqi Ma</title>
+<meta name="keywords" content="">
+<meta name="description" content="1. Main Settings Experiment name: f.e12.FAMIPCN.f19_f19
+ f f compset;
+“F” compsets use CAM,CLM, CICE(prescribed-thermo), DOCN(prescribed-SST). e12 cesm1.2.2 (model version) FAMIPCN AMIP run for CMIP5 protocol with CLM/CN:
+AMIP_CAM4_CLM40%CN_CICE%PRES_DOCN%DOM_RTM_SGLC_SWAV
+AMIP: time, AMIP runs
+CAM4: atmosphere model CAM4
+CLM40: land model, clm4.0
+CN (carbon-nitrogen) model version: a biogeochemistry model that simulates the carbon and nitrogen cycles
+CICE%PRES: prescribed sea ice
+DOCN%DOM: DOCN data ocean mode
+RTM: river transport model, land river runoff">
+<meta name="author" content="Anqi Ma">
+<link rel="canonical" href="http://maanqi4.github.io/posts/short-long-experiment-outline/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.4011e96cb50c0badbd5e58bc6d1415a2f58babd783714a3a042388142298609f.css" integrity="sha256-QBHpbLUMC629Xli8bRQVovWLq9eDcUo6BCOIFCKYYJ8=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://maanqi4.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://maanqi4.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://maanqi4.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://maanqi4.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="http://maanqi4.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://maanqi4.github.io/posts/short-long-experiment-outline/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="[Linux] Generate Short/Long PPE with CESM" />
+<meta property="og:description" content="1. Main Settings Experiment name: f.e12.FAMIPCN.f19_f19
+ f f compset;
+“F” compsets use CAM,CLM, CICE(prescribed-thermo), DOCN(prescribed-SST). e12 cesm1.2.2 (model version) FAMIPCN AMIP run for CMIP5 protocol with CLM/CN:
+AMIP_CAM4_CLM40%CN_CICE%PRES_DOCN%DOM_RTM_SGLC_SWAV
+AMIP: time, AMIP runs
+CAM4: atmosphere model CAM4
+CLM40: land model, clm4.0
+CN (carbon-nitrogen) model version: a biogeochemistry model that simulates the carbon and nitrogen cycles
+CICE%PRES: prescribed sea ice
+DOCN%DOM: DOCN data ocean mode
+RTM: river transport model, land river runoff" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://maanqi4.github.io/posts/short-long-experiment-outline/" /><meta property="og:image" content="http://maanqi4.github.io/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-10-13T00:00:00+00:00" />
+<meta property="article:modified_time" content="2022-10-13T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://maanqi4.github.io/papermod-cover.png"/>
+
+<meta name="twitter:title" content="[Linux] Generate Short/Long PPE with CESM"/>
+<meta name="twitter:description" content="1. Main Settings Experiment name: f.e12.FAMIPCN.f19_f19
+ f f compset;
+“F” compsets use CAM,CLM, CICE(prescribed-thermo), DOCN(prescribed-SST). e12 cesm1.2.2 (model version) FAMIPCN AMIP run for CMIP5 protocol with CLM/CN:
+AMIP_CAM4_CLM40%CN_CICE%PRES_DOCN%DOM_RTM_SGLC_SWAV
+AMIP: time, AMIP runs
+CAM4: atmosphere model CAM4
+CLM40: land model, clm4.0
+CN (carbon-nitrogen) model version: a biogeochemistry model that simulates the carbon and nitrogen cycles
+CICE%PRES: prescribed sea ice
+DOCN%DOM: DOCN data ocean mode
+RTM: river transport model, land river runoff"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://maanqi4.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "[Linux] Generate Short/Long PPE with CESM",
+      "item": "http://maanqi4.github.io/posts/short-long-experiment-outline/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "[Linux] Generate Short/Long PPE with CESM",
+  "name": "[Linux] Generate Short\/Long PPE with CESM",
+  "description": "1. Main Settings Experiment name: f.e12.FAMIPCN.f19_f19\n f f compset;\n“F” compsets use CAM,CLM, CICE(prescribed-thermo), DOCN(prescribed-SST). e12 cesm1.2.2 (model version) FAMIPCN AMIP run for CMIP5 protocol with CLM/CN:\nAMIP_CAM4_CLM40%CN_CICE%PRES_DOCN%DOM_RTM_SGLC_SWAV\nAMIP: time, AMIP runs\nCAM4: atmosphere model CAM4\nCLM40: land model, clm4.0\nCN (carbon-nitrogen) model version: a biogeochemistry model that simulates the carbon and nitrogen cycles\nCICE%PRES: prescribed sea ice\nDOCN%DOM: DOCN data ocean mode\nRTM: river transport model, land river runoff",
+  "keywords": [
+    
+  ],
+  "articleBody": "1. Main Settings Experiment name: f.e12.FAMIPCN.f19_f19\n f f compset;\n“F” compsets use CAM,CLM, CICE(prescribed-thermo), DOCN(prescribed-SST). e12 cesm1.2.2 (model version) FAMIPCN AMIP run for CMIP5 protocol with CLM/CN:\nAMIP_CAM4_CLM40%CN_CICE%PRES_DOCN%DOM_RTM_SGLC_SWAV\nAMIP: time, AMIP runs\nCAM4: atmosphere model CAM4\nCLM40: land model, clm4.0\nCN (carbon-nitrogen) model version: a biogeochemistry model that simulates the carbon and nitrogen cycles\nCICE%PRES: prescribed sea ice\nDOCN%DOM: DOCN data ocean mode\nRTM: river transport model, land river runoff\nSGLC: Land Ice, Stub glacier (land ice) component\nSWAV: Wave, Stub wave component f19_f19 1.9x2.5_1.9x2.5\natm_grid,lnd_grid,ice_grid,ocn_grid: 1.9x2.5\natm_grid_type,ocn_grid_type: finite volume   1.1 output frequency 1.2 enable -COSP option In user_nl_cam\n\u0026cospsimulator_nl docosp = .true. cosp_amwg = .true. cosp_cfmip_da = .true. #daily simulator  2. Long Simulations 3. Short Simulations 3.1 Initial Conditions 3.1.1 generate initial conditions Base: f.e12.FAMIPCN.f19_f19.short.Parent Modify env_run.xml\n./xmlchange RUN_STARTDATE = '1978-10-01' ./xmlchange STOP_OPTIONS = 'nmonths' ./xmlchange STOP_N = '3' ./xmlchange RESUBMIT = '3' Modify user_nl_cam\ninithist = 'MONTHLY' inithist_all = .true. Also remember to set relevant perturbed parameters in user_nl_cam\ncldfrc_rhminl = 0.91 cldopt_rliqocean = 14 hkconv_cmftau = 1800 cldfrc_rhminh = 0.80 zmconv_tau = 3600 After 4 runs consecutively, in $ARCHIVE/rest, there will be 4 directories, containing initial files for 1979-01-01, 1979-04-01, 1979-07-01, 1979-10-01. Example file list in 1979-01-01:\nf.e12.FAMIPCN.f19_f19.short.Parent.cam.h0.1978-12.nc f.e12.FAMIPCN.f19_f19.short.Parent.cam.h1.1978-10-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.cam.h2.1978-12-30-10800.nc f.e12.FAMIPCN.f19_f19.short.Parent.cam.i.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.cam.r.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.cam.rh0.1979-10-31-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.cam.rs.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.cice.r.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.clm2.h0.1978-12.nc f.e12.FAMIPCN.f19_f19.short.Parent.clm2.r.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.clm2.rh0.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.cpl.r.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.docn.rs1.1979-01-01-00000.bin f.e12.FAMIPCN.f19_f19.short.Parent.rtm.h0.1978-12.nc f.e12.FAMIPCN.f19_f19.short.Parent.rtm.r.1979-01-01-00000.nc f.e12.FAMIPCN.f19_f19.short.Parent.rtm.rh0.1979-01-01-00000.nc rpointer.atm rpointer.drv rpointer.ice rpointer.lnd rpointer.ocn rpointer.rof scripts: csh.init.diff.niagara generate initial conditions for each parameter setting (modify and submit 50cases: f.e12.FAMIPCN.f19_f19.init.diff.*)\n3.2 start initial runs (same initial condition for each parameter setting) scripts:\n bash ==init.short.parent.niagara== to generate parent run files [change runstartdate] sbatch ==csh.init.short.child.niagara== to run 50 ensembles in given start date [change runstartdate] f.e12.FAMIPCN.f19_f19.short.op.$i.$runstartdate munual run 4 parent runs in f.e12.FAMIPCN.f19_f19.init.op.$runstartdate genarated by ==init.short.parent.niagara== [munually modify parameters in user_nl_cam]  Modify initial files, in user_nl_cam (use the initial files generate by $3.1$)\nncdata = 'f.e12.FAMIPCN.f19_f19.short.Parent.cam.i.1979-01-01-00000.nc' #initial files for CAM By default, this file should soft link to $RUN, setting RUN_REFCASE and GET_REFCASE=TRUE to make true of this. One can also indicate specific path for initial file, but if initial conditions files are not in $RUN directory, make sure to also set other model’s .r. files to avoid error. I prefer to ponit all initial files to $RUN for an easier operation. Modify env_run.xml\n./xmlchange RUN_TYPE=hybrid #default is hybrid for FAMIPCN, but make sure set it up anyway ./xmlchange RUN_STARTDATE=1979-01-01 ./xmlchange RUN_REFCASE=f.e12.FAMIPCN.f19_f19.short.Parent #which REFCASE to look for in /inputdata/ccsm_init ./xmlchange RUN_REFDATE=1979-01-01 #which date/directory in REFCASE to use ./xmlchange GET_REFCASE=TRUE #soft link initial files to $RUN directory One can have a case start from 1979-01-01 but using initial conditions in 1979-04-01 by setting RUN_STARTDATE=1979-01-01 and RUN_REFDATE=1979-04-01. (If these is a REFCASE started in 1979-04-01 existed.) Build a new case or rebuild the original case\n3.3 initial runs with different initial conditions for different parameter setting scripts: csh.init.diff.short.child.parent\n",
+  "wordCount" : "460",
+  "inLanguage": "en",
+  "datePublished": "2022-10-13T00:00:00Z",
+  "dateModified": "2022-10-13T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Anqi Ma"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://maanqi4.github.io/posts/short-long-experiment-outline/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Anqi Ma",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://maanqi4.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://maanqi4.github.io/" accesskey="h" title="Anqi Ma (Alt + H)">Anqi Ma</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="http://maanqi4.github.io/home/" title="Resume"
+                            aria-label="Resume">Resume</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://maanqi4.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://maanqi4.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://maanqi4.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://maanqi4.github.io/">Home</a>&nbsp;»&nbsp;<a href="http://maanqi4.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      [Linux] Generate Short/Long PPE with CESM
+    </h1>
+    <div class="post-meta"><span title='2022-10-13 00:00:00 +0000 UTC'>October 13, 2022</span>&nbsp;·&nbsp;3 min&nbsp;·&nbsp;Anqi Ma
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#1-main-settings">1. Main Settings</a>
+      <ul>
+        <li><a href="#11-output-frequency">1.1 output frequency</a></li>
+        <li><a href="#12-enable--cosp-option">1.2 enable -COSP option</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-long-simulations">2. Long Simulations</a></li>
+    <li><a href="#3-short-simulations">3. Short Simulations</a>
+      <ul>
+        <li><a href="#31-initial-conditions">3.1 Initial Conditions</a></li>
+        <li><a href="#32-start-initial-runs-same-initial-condition-for-each-parameter-setting">3.2 start initial runs (same initial condition for each parameter setting)</a></li>
+        <li><a href="#33-initial-runs-with-different-initial-conditions-for-different-parameter-setting">3.3 initial runs with different initial conditions for different parameter setting</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h2 id="1-main-settings">1. Main Settings<a hidden class="anchor" aria-hidden="true" href="#1-main-settings">#</a></h2>
+<p><strong>Experiment name:</strong> <code>f.e12.FAMIPCN.f19_f19</code></p>
+<ul>
+<li><code>f</code> f compset;<br>
+“F” compsets use CAM,CLM, CICE(prescribed-thermo), DOCN(prescribed-SST).</li>
+<li><code>e12</code> cesm1.2.2 (model version)</li>
+<li><code>FAMIPCN</code> AMIP run for CMIP5 protocol with CLM/CN:<br>
+<code>AMIP_CAM4_CLM40%CN_CICE%PRES_DOCN%DOM_RTM_SGLC_SWAV</code><br>
+<code>AMIP</code>: time, AMIP runs<br>
+<code>CAM4</code>: atmosphere model CAM4<br>
+<code>CLM40</code>: land model, clm4.0<br>
+<code>CN</code> (carbon-nitrogen) model version: a biogeochemistry model that simulates the carbon and nitrogen cycles<br>
+<code>CICE%PRES</code>: prescribed sea ice<br>
+<code>DOCN%DOM</code>: DOCN data ocean mode<br>
+<code>RTM</code>: river transport model, land river runoff<br>
+<code>SGLC</code>: Land Ice, Stub glacier (land ice) component<br>
+<code>SWAV</code>: Wave, Stub wave component</li>
+<li><code>f19_f19</code> 1.9x2.5_1.9x2.5<br>
+atm_grid,lnd_grid,ice_grid,ocn_grid: 1.9x2.5<br>
+atm_grid_type,ocn_grid_type: finite volume
+<img loading="lazy" src="/images/FV_grid.png" alt=""  />
+</li>
+</ul>
+<h3 id="11-output-frequency">1.1 output frequency<a hidden class="anchor" aria-hidden="true" href="#11-output-frequency">#</a></h3>
+<h3 id="12-enable--cosp-option">1.2 enable -COSP option<a hidden class="anchor" aria-hidden="true" href="#12-enable--cosp-option">#</a></h3>
+<p>In <code>user_nl_cam</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="p">&amp;</span>cospsimulator_nl
+<span class="nv">docosp</span>         <span class="o">=</span> .true.
+<span class="nv">cosp_amwg</span>      <span class="o">=</span> .true.
+<span class="nv">cosp_cfmip_da</span> <span class="o">=</span> .true. <span class="c1">#daily simulator </span>
+</code></pre></div><h2 id="2-long-simulations">2. Long Simulations<a hidden class="anchor" aria-hidden="true" href="#2-long-simulations">#</a></h2>
+<h2 id="3-short-simulations">3. Short Simulations<a hidden class="anchor" aria-hidden="true" href="#3-short-simulations">#</a></h2>
+<h3 id="31-initial-conditions">3.1 Initial Conditions<a hidden class="anchor" aria-hidden="true" href="#31-initial-conditions">#</a></h3>
+<h4 id="311-generate-initial-conditions">3.1.1 generate initial conditions<a hidden class="anchor" aria-hidden="true" href="#311-generate-initial-conditions">#</a></h4>
+<p><strong>Base:</strong> <code>f.e12.FAMIPCN.f19_f19.short.Parent</code>
+Modify <code>env_run.xml</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="o">./</span><span class="n">xmlchange</span> <span class="n">RUN_STARTDATE</span> <span class="o">=</span> <span class="s1">&#39;1978-10-01&#39;</span>
+<span class="o">./</span><span class="n">xmlchange</span> <span class="n">STOP_OPTIONS</span> <span class="o">=</span> <span class="s1">&#39;nmonths&#39;</span> 
+<span class="o">./</span><span class="n">xmlchange</span> <span class="n">STOP_N</span> <span class="o">=</span> <span class="s1">&#39;3&#39;</span>
+<span class="o">./</span><span class="n">xmlchange</span> <span class="n">RESUBMIT</span> <span class="o">=</span> <span class="s1">&#39;3&#39;</span>
+</code></pre></div><p>Modify <code>user_nl_cam</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">inithist</span> <span class="o">=</span> <span class="s1">&#39;MONTHLY&#39;</span>
+<span class="n">inithist_all</span> <span class="o">=</span> <span class="o">.</span><span class="n">true</span><span class="o">.</span>
+</code></pre></div><p>Also remember to set relevant perturbed parameters in <code>user_nl_cam</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="n">cldfrc_rhminl</span> <span class="o">=</span> <span class="mf">0.91</span>
+<span class="n">cldopt_rliqocean</span> <span class="o">=</span> <span class="mi">14</span>
+<span class="n">hkconv_cmftau</span> <span class="o">=</span> <span class="mi">1800</span>
+<span class="n">cldfrc_rhminh</span> <span class="o">=</span> <span class="mf">0.80</span>
+<span class="n">zmconv_tau</span> <span class="o">=</span> <span class="mi">3600</span>
+</code></pre></div><p>After 4 runs consecutively, in <code>$ARCHIVE/rest</code>, there will be 4 directories, containing initial files for <code>1979-01-01</code>, <code>1979-04-01</code>, <code>1979-07-01</code>, <code>1979-10-01</code>.
+Example file list in <code>1979-01-01</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">f.e12.FAMIPCN.f19_f19.short.Parent.cam.h0.1978-12.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cam.h1.1978-10-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cam.h2.1978-12-30-10800.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cam.i.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cam.r.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cam.rh0.1979-10-31-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cam.rs.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cice.r.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.clm2.h0.1978-12.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.clm2.r.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.clm2.rh0.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.cpl.r.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.docn.rs1.1979-01-01-00000.bin
+f.e12.FAMIPCN.f19_f19.short.Parent.rtm.h0.1978-12.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.rtm.r.1979-01-01-00000.nc
+f.e12.FAMIPCN.f19_f19.short.Parent.rtm.rh0.1979-01-01-00000.nc
+rpointer.atm
+rpointer.drv
+rpointer.ice
+rpointer.lnd
+rpointer.ocn
+rpointer.rof
+</code></pre></div><p><strong>scripts:</strong> <code>csh.init.diff.niagara</code> generate initial conditions for each parameter setting (modify and submit 50cases: <code>f.e12.FAMIPCN.f19_f19.init.diff.*</code>)</p>
+<h3 id="32-start-initial-runs-same-initial-condition-for-each-parameter-setting">3.2 start initial runs (same initial condition for each parameter setting)<a hidden class="anchor" aria-hidden="true" href="#32-start-initial-runs-same-initial-condition-for-each-parameter-setting">#</a></h3>
+<p><strong>scripts:</strong></p>
+<ol>
+<li>bash ==init.short.parent.niagara== to generate parent run files [change <code>runstartdate</code>]</li>
+<li>sbatch ==csh.init.short.child.niagara== to run 50 ensembles in given start date [change <code>runstartdate</code>] <code>f.e12.FAMIPCN.f19_f19.short.op.$i.$runstartdate</code></li>
+<li>munual run 4 parent runs in <code>f.e12.FAMIPCN.f19_f19.init.op.$runstartdate</code> genarated by ==init.short.parent.niagara== [munually modify parameters in <code>user_nl_cam</code>]</li>
+</ol>
+<p>Modify initial files, in <code>user_nl_cam</code> (use the initial files generate by $3.1$)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="nv">ncdata</span> <span class="o">=</span> <span class="s1">&#39;f.e12.FAMIPCN.f19_f19.short.Parent.cam.i.1979-01-01-00000.nc&#39;</span> <span class="c1">#initial files for CAM</span>
+</code></pre></div><p>By default, this file should soft link to <code>$RUN</code>, setting <code>RUN_REFCASE</code> and <code>GET_REFCASE=TRUE</code> to make true of this.
+One can also indicate specific path for initial file, but if initial conditions files are not in <code>$RUN</code> directory, make sure to also set other model&rsquo;s <code>.r.</code> files to avoid error. I prefer to ponit all initial files to <code>$RUN</code> for an easier operation.
+Modify <code>env_run.xml</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell">./xmlchange <span class="nv">RUN_TYPE</span><span class="o">=</span>hybrid <span class="c1">#default is hybrid for FAMIPCN, but make sure set it up anyway</span>
+./xmlchange <span class="nv">RUN_STARTDATE</span><span class="o">=</span>1979-01-01
+./xmlchange <span class="nv">RUN_REFCASE</span><span class="o">=</span>f.e12.FAMIPCN.f19_f19.short.Parent <span class="c1">#which REFCASE to look for in /inputdata/ccsm_init</span>
+./xmlchange <span class="nv">RUN_REFDATE</span><span class="o">=</span>1979-01-01 <span class="c1">#which date/directory in REFCASE to use</span>
+
+./xmlchange <span class="nv">GET_REFCASE</span><span class="o">=</span>TRUE <span class="c1">#soft link initial files to $RUN directory</span>
+</code></pre></div><p>One can have a case start from <code>1979-01-01</code> but using initial conditions in <code>1979-04-01</code> by setting <code>RUN_STARTDATE=1979-01-01</code> and <code>RUN_REFDATE=1979-04-01</code>. (If these is a <code>REFCASE</code> started in <code>1979-04-01</code> existed.)
+Build a new case or rebuild the original case</p>
+<h3 id="33-initial-runs-with-different-initial-conditions-for-different-parameter-setting">3.3 initial runs with different initial conditions for different parameter setting<a hidden class="anchor" aria-hidden="true" href="#33-initial-runs-with-different-initial-conditions-for-different-parameter-setting">#</a></h3>
+<p><strong>scripts:</strong> <code>csh.init.diff.short.child.parent</code></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+    </ul>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="http://maanqi4.github.io/">Anqi Ma</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>
