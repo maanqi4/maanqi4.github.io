@@ -1,0 +1,182 @@
+baseURL: http://maanqi4.github.io/
+languageCode: en-us
+paginate: 5
+title: Anqi Ma
+theme: PaperMod
+
+enableInlineShortcodes: true
+enableRobotsTXT: true
+buildDrafts: false
+buildFuture: false
+buildExpired: false
+enableEmoji: true
+pygmentsUseClasses: true
+# googleAnalytics: UA-123-45
+
+minify:
+    disableXML: true
+    # minifyOutput: true
+
+languages:
+    en:
+        languageName: "Blog"
+        #languageAltTitle: English
+        weight: 1
+        taxonomies:
+          category: categories
+          tag: tags
+          series: series
+        menu:
+            main:
+                - name: Archive
+                  url: archives
+                  weight: 1
+                - name: Search
+                  url: search/
+                  weight: 10
+                - name: Tags
+                  url: tags/
+                  weight: 10
+
+    Home:
+        languageName: "Resume"
+        #languageAltTitle: English
+        weight: 2
+        title: Anqi Ma
+        taxonomies:
+          category: categories
+          tag: tags
+          series: series
+        profileMode:
+            enabled: true
+            title: Anqi Ma
+            #avatar: "/images/wallroom-3840x2160-bg-eb07f1c.jpg"
+            #imageUrl: "/assets/images/wallroom-3840x2160-bg-eb07f1c.jpg"
+            #imageTitle: Profile image
+            #imageWidth: 120
+            #imageHeight: 120
+            subtitle: "Last update: 2023-02-28"
+            buttons:
+                - name: Posts
+                  url: /posts
+                - name: Resume
+                  url: about/
+
+
+
+outputs:
+    home:
+        - HTML
+        - RSS
+        - JSON
+
+params:
+    env: production # to enable google analytics, opengraph, twitter-cards and schema.
+    description: "Theme PaperMod - https://github.com/adityatelange/hugo-PaperMod"
+    author: Theme PaperMod
+    # author: ["Me", "You"] # multiple authors
+
+    defaultTheme: auto
+    # disableThemeToggle: true
+    ShowShareButtons: false
+    ShowReadingTime: true
+    # disableSpecial1stPost: true
+    displayFullLangName: true
+    ShowPostNavLinks: true
+    ShowBreadCrumbs: true
+    ShowCodeCopyButtons: true
+    ShowRssButtonInSectionTermList: false
+    ShowToc: true
+    UseHugoToc: true
+    #comments: false
+    images: ["papermod-cover.png"]
+
+    profileMode:
+        enabled: false
+        title: PaperMod
+        imageUrl: "#"
+        imageTitle: my image
+        # imageWidth: 120
+        # imageHeight: 120
+        buttons:
+            - name: Archives
+              url: archives
+            - name: Tags
+              url: tags
+
+    homeInfoParams:
+        Title: "Hi there 😊"
+        Content: >
+            I'm interested in applying statistical and numerical models to solve real-world problems. 
+            
+            - Following is a list of major projects I've worked on:
+
+            1. Bayesian Calibration of CESM model with Machine Learning emulators (Gaussian Process)
+
+            2. Teleconnection between snow cover forcing and precipitation (Singular Value Decomposition and Linear Baroclinic Model)
+
+            3. Modelling dry deposition of ozone with WRF-Chem
+
+            4. WRF simulations of wind environment and resources
+
+            - These projects led to my MSc in Geography, and in Meteorology, focusing on numerical modelling.
+            
+            - Here is a collection of my technical notes for sharing and discussion.
+
+            - Hope you enjoy reading these challenges as much as I am working ~~
+
+          #  - Connect with me on [**LinkedIn**](https://www.linkedin.com/in/anqi-ma-9247b0242)
+
+    socialIcons:
+        - name: github
+          url: "https://github.com/maanqi4"
+        - name: LinkedIn
+          url: "https://www.linkedin.com/in/anqi-ma-9247b0242"
+        - name: email
+          url: "maanqi4@gmail.com"
+
+
+    # label:
+    #     text: "Home"
+    #     icon: icon.png
+    #     iconHeight: 35
+
+    # analytics:
+    #     google:
+    #         SiteVerificationTag: "XYZabc"
+
+    assets:
+        disableHLJS: true
+    #     favicon: "<link / abs url>"
+    #     favicon16x16: "<link / abs url>"
+    #     favicon32x32: "<link / abs url>"
+    #     apple_touch_icon: "<link / abs url>"
+    #     safari_pinned_tab: "<link / abs url>"
+
+    # cover:
+    #     hidden: true # hide everywhere but not in structured data
+    #     hiddenInList: true # hide on list pages and home
+    #     hiddenInSingle: true # hide on single page
+
+    # fuseOpts:
+    #     isCaseSensitive: false
+    #     shouldSort: true
+    #     location: 0
+    #     distance: 1000
+    #     threshold: 0.4
+    #     minMatchCharLength: 0
+    #     keys: ["title", "permalink", "summary", "content"]
+
+markup:
+    goldmark:
+        renderer:
+            unsafe: true
+    highlight:
+        noClasses: false
+        # anchorLineNos: true
+        # codeFences: true
+        # guessSyntax: true
+        # lineNos: true
+        # style: monokai
+
+
