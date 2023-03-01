@@ -3,12 +3,9 @@ name: Anqi Ma's Website
 on:
   push:
     paths-ignore:
-      - "images/**"
-      - "LICENSE"
-      - "README.md"
+      #- "images/**"
     branches:
       - master
-      - exampleSite
   workflow_dispatch:
     # manual run
     inputs:
