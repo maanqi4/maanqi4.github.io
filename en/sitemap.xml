@@ -2,11 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://maanqi4.github.io/posts/short-long-experiment-outline/</loc>
-    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
-  </url><url>
     <loc>http://maanqi4.github.io/</loc>
-    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+    <lastmod>2023-03-03T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="home"
@@ -18,14 +15,17 @@
                 href="http://maanqi4.github.io/"
                 />
   </url><url>
-    <loc>http://maanqi4.github.io/tags/linux/</loc>
-    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+    <loc>http://maanqi4.github.io/posts/earthquakes/</loc>
+    <lastmod>2023-03-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://maanqi4.github.io/posts/</loc>
-    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+    <lastmod>2023-03-03T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/tags/rstudio/</loc>
+    <lastmod>2023-03-03T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://maanqi4.github.io/tags/</loc>
-    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+    <lastmod>2023-03-03T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="home"
@@ -37,9 +37,11 @@
                 href="http://maanqi4.github.io/tags/"
                 />
   </url><url>
-    <loc>http://maanqi4.github.io/archives/</loc>
+    <loc>http://maanqi4.github.io/posts/cancensus/</loc>
+    <lastmod>2023-03-01T00:00:00+00:00</lastmod>
   </url><url>
     <loc>http://maanqi4.github.io/categories/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
     <xhtml:link
                 rel="alternate"
                 hreflang="home"
@@ -50,6 +52,29 @@
                 hreflang="en"
                 href="http://maanqi4.github.io/categories/"
                 />
+  </url><url>
+    <loc>http://maanqi4.github.io/tags/cesm/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/categories/cesm/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/posts/short-long-experiment-outline/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/tags/linux/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/categories/linux/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/tags/shell/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/categories/shell/</loc>
+    <lastmod>2022-10-13T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>http://maanqi4.github.io/archives/</loc>
   </url><url>
     <loc>http://maanqi4.github.io/search/</loc>
   </url><url>

@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Earthquakes data analysis demo | Anqi Ma</title>
+<meta name="keywords" content="RStudio">
+<meta name="description" content="This is a course assignment for analyze and visualize earthquake data
+ 1. Read the data in and clean it for analysis, used the readr package functions for reading and parsing data. [5 marks] My answer is written here and is explains what I did and why.
+#code  library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.4.0 ✔ purrr 1.0.0  ## ✔ tibble 3.">
+<meta name="author" content="Anqi Ma">
+<link rel="canonical" href="http://maanqi4.github.io/posts/earthquakes/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.4011e96cb50c0badbd5e58bc6d1415a2f58babd783714a3a042388142298609f.css" integrity="sha256-QBHpbLUMC629Xli8bRQVovWLq9eDcUo6BCOIFCKYYJ8=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://maanqi4.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://maanqi4.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://maanqi4.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://maanqi4.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="http://maanqi4.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://maanqi4.github.io/posts/earthquakes/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Earthquakes data analysis demo" />
+<meta property="og:description" content="This is a course assignment for analyze and visualize earthquake data
+ 1. Read the data in and clean it for analysis, used the readr package functions for reading and parsing data. [5 marks] My answer is written here and is explains what I did and why.
+#code  library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.4.0 ✔ purrr 1.0.0  ## ✔ tibble 3." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://maanqi4.github.io/posts/earthquakes/" /><meta property="og:image" content="http://maanqi4.github.io/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-03-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-03-03T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://maanqi4.github.io/papermod-cover.png"/>
+
+<meta name="twitter:title" content="Earthquakes data analysis demo"/>
+<meta name="twitter:description" content="This is a course assignment for analyze and visualize earthquake data
+ 1. Read the data in and clean it for analysis, used the readr package functions for reading and parsing data. [5 marks] My answer is written here and is explains what I did and why.
+#code  library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.4.0 ✔ purrr 1.0.0  ## ✔ tibble 3."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://maanqi4.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Earthquakes data analysis demo",
+      "item": "http://maanqi4.github.io/posts/earthquakes/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Earthquakes data analysis demo",
+  "name": "Earthquakes data analysis demo",
+  "description": "This is a course assignment for analyze and visualize earthquake data\n 1. Read the data in and clean it for analysis, used the readr package functions for reading and parsing data. [5 marks] My answer is written here and is explains what I did and why.\n#code  library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.4.0 ✔ purrr 1.0.0  ## ✔ tibble 3.",
+  "keywords": [
+    "RStudio"
+  ],
+  "articleBody": " This is a course assignment for analyze and visualize earthquake data\n 1. Read the data in and clean it for analysis, used the readr package functions for reading and parsing data. [5 marks] My answer is written here and is explains what I did and why.\n#code  library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.4.0 ✔ purrr 1.0.0  ## ✔ tibble 3.1.8 ✔ dplyr 1.0.10 ## ✔ tidyr 1.2.1 ✔ stringr 1.5.0  ## ✔ readr 2.1.3 ✔ forcats 0.5.2  ## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ── ## ✖ dplyr::filter() masks stats::filter() ## ✖ dplyr::lag() masks stats::lag() #read data data  read_csv(\"https://jjvenky.github.io/GG606AW23/database.csv\", col_types = cols(Date = col_date(format = \"%m/%d/%Y\"), Time = col_time(format = \"%H:%M:%S\"))) #problems(data) #data[problems(data)$row,] #as.POSIXct(problems(data)$actual, \"%Y-%m-%dT%H:%M:%S\", tz=\"UTC\") #check data and omit N/A if(any(is.na(data$Date))){ data  filter(data, !is.na(data$Date)) } data ## # A tibble: 23,409 × 21\r## Date Time Latitude Longitude Type Depth Depth…¹ Depth…² Magni…³\r##         \r## 1 1965-01-02 13:44:18 19.2 146. Earthqu… 132. NA NA 6 ## 2 1965-01-04 11:29:49 1.86 127. Earthqu… 80 NA NA 5.8\r## 3 1965-01-05 18:05:58 -20.6 -174. Earthqu… 20 NA NA 6.2\r## 4 1965-01-08 18:49:43 -59.1 -23.6 Earthqu… 15 NA NA 5.8\r## 5 1965-01-09 13:32:50 11.9 126. Earthqu… 15 NA NA 5.8\r## 6 1965-01-10 13:36:32 -13.4 167. Earthqu… 35 NA NA 6.7\r## 7 1965-01-12 13:32:25 27.4 87.9 Earthqu… 20 NA NA 5.9\r## 8 1965-01-15 23:17:42 -13.3 166. Earthqu… 35 NA NA 6 ## 9 1965-01-16 11:32:37 -56.5 -27.0 Earthqu… 95 NA NA 6 ## 10 1965-01-17 10:43:17 -24.6 178. Earthqu… 565 NA NA 5.8\r## # … with 23,399 more rows, 12 more variables: `Magnitude Type` ,\r## # `Magnitude Error` , `Magnitude Seismic Stations` ,\r## # `Azimuthal Gap` , `Horizontal Distance` ,\r## # `Horizontal Error` , `Root Mean Square` , ID , Source ,\r## # `Location Source` , `Magnitude Source` , Status , and\r## # abbreviated variable names ¹​`Depth Error`, ²​`Depth Seismic Stations`,\r## # ³​Magnitude\r Here col_types in read_csv function was defined with format to match the format of Date and Time in the .csv file.\nNote:\nThere are 3 rows in which the Date and Time were written different format compared with the rest of the dataset. Although it’s possible to convert them to acessible format, for example using as.POSIXct(problems(data)$actual, \"%Y-%m-%dT%H:%M:%S\", tz=\"UTC\").The current method somehow could successfully return the correct Date, and the following question doesn’t necessary need the exact time of the earthquakes, plus I’m not sure about the timezone in the Date written in those 3 rows. So I just ignored those 3 rows as this warning would not affect following analysis.\n2. Did more earthquakes happen on weekends or weekdays? [5 marks] #code  #select Earthquake Earthquake  subset(data, Type == \"Earthquake\") #convert Date to day in a week Earthquake$wday  weekdays(Earthquake$Date) #reorder days in week (so it'll be in good order in figure's legend) Earthquake$wday  factor(Earthquake$wday, levels = c(\"Monday\",\"Tuesday\",\"Wednesday\",\"Thursday\", \"Friday\",\"Saturday\",\"Sunday\")) #separate weekdays and weekend Earthquake  mutate(Earthquake, wday_ID = case_when(wday == \"Sunday\" ~ \"Weekends\", wday == \"Saturday\" ~ \"Weekends\", TRUE ~ \"Weekdays\")) #check dataset before plotting  #Earthquake #plot ggplot(data = Earthquake) + geom_bar(aes(wday_ID,fill=wday), alpha=1) + theme_classic() + scale_fill_brewer(palette = \"Set3\") + labs(title = \"Amount of Earthquake happened on Weekdays and Weekends\", x=\"\",fill=\"Day in week\") The above analysis demonstrates the amount of earthquakes happened on weekdays and weekends in the dataset. There are significantly more earthquakes happened on weekdays, however, when it comes to the number of earthquakes per day, it doesn’t show any preference between weekdays or weekends. There are 5 days in a week could be counted as weekdays, while only 2 days are weekends. If earthquakes are equally distributed in every day, then when numbers added up, it will be more earthquakes on weekdays than weekends as there are more days in weekdays.\n3. Has there been any change in the frequency of earthquakes? [5 marks] #code  #create new variable Year Earthquake  mutate(Earthquake, Year = format(Date, \"%Y\")) #(for setting figure axis) #count minmax of Year and number of earthquakes minyear  min(Earthquake$Year) maxyear  max(Earthquake$Year) counteq  Earthquake %% count(Earthquake$Year) maxeq  max(counteq$n) maxy  ceiling(maxeq/100)*100 #plot ggplot(data = Earthquake) + geom_bar(aes(Year),fill=\"cornflowerblue\") + theme_minimal() + scale_fill_brewer(palette = \"Set3\") + labs(title = paste0(\"Amount of earthquake each year (\", minyear, \"-\", maxyear, \")\")) + scale_x_discrete(breaks = seq(minyear,maxyear,by=5)) + scale_y_continuous(breaks = seq(0,maxy,by=100), expand = c(0,0)) + coord_cartesian(ylim = c(0,maxy)) The above analysis demonstrates the trend of earthquake from 1965 to 2016. The number of earthquake in each year showed a steady increase in the given time period. Therefore, we concluded that the frequency of earthquake in each year has a steady increase between the year of 1965 and 2016.\n4. Where were there more earthquakes in the 1980s, South America or North America? [5 marks] #code  library(maps) ## ## Attaching package: 'maps'\r## The following object is masked from 'package:purrr':\r## ## map\r #select earthquakes in 1980s eq.1980s  filter(Earthquake, Year = 1980 \u0026 Year  1989) #eq.1980s #First, plot a scatterplot map with all the earthquakes in 1980s world_map  map_data(\"world\") ggplot(NULL) + geom_polygon(data = world_map, aes(x=long,y=lat,group=group), fill=\"azure3\") + geom_point(data = eq.1980s, aes(x=Longitude, y=Latitude), color = \"cornflowerblue\", size=.5) + theme_void() + ggtitle(\"Earthquakes in 1980s\") ## Notice a lot of earthquakes located in ocean, some on land ##define South/North America ##only count earthquakes happened on land ##convert (lat,lon) to continent (point in polygon question) ##https://stackoverflow.com/questions/21708488/get-country-and-continent-from-longitude-and-latitude-point-in-r library(sp) library(rworldmap) ## ### Welcome to rworldmap ###\r## For a short introduction type : vignette('rworldmap')\r latlon2Con  function(lat,lon){ sPDF  getMap() points = data.frame(lon=lon,lat=lat) pointsSP = SpatialPoints(points, proj4string = CRS(proj4string(sPDF))) indices = over(pointsSP, sPDF) return(indices$REGION) #return(indice$ADMIN) } eq.1980s.land  mutate(eq.1980s, Continent = latlon2Con(eq.1980s$Latitude,eq.1980s$Longitude)) eq.1980s.land  filter(eq.1980s.land, !is.na(Continent)) ggplot(data = eq.1980s.land) +geom_bar(aes(Continent), fill=\"cornflowerblue\")+ theme_classic() + ggtitle(\"Earthquakes in 1980s (on land)\") ##2. consider earthquakes both on land and ocean ##if earthquake located in ocean, find the nearest continent ##calculate centriods of each countries #library(sf) #world_map_sf #crs = 4326 means lat lon are interpreted as WGS 84 coordinates #world_cens #create index to speed up the nearest function #grid_index #find nearest centroids  #point #point_sf #nearest_points #still takes too much time and memory, ignore this method! #nearest_points The above analysis demonstrates the geospatial distribution of earthquakes in 1980s and the number of earthquake in each continent.\nFirst, I demonstrated the raw data of earthquakes in 1980s and their distribution. The earthquakes were mostly taken place in the major earthquake zone, while some of the earthquakes happened on land, a large number of them happened in the ocean area. Here, when identifying the origin location(continent) of earthquakes, I excluded those in the ocean.\nIdealy, there should be 2 algorithms identifying the origin location of the earthquakes: point-in-polygon and finding-nearest-points. After experiments, I realized it’s not feasible to calculate nearest points using such large dataset on my laptop. Here I modified the function in rworldmap package and in this solution. The latlon2Con function in the code could decide whether the location (indexed by latitude and longitude) falls into a certain country’s polygon, and return the continent where that country belongs. However, for earthquakes happened in ocean, it will return N/A value.\nWith the above function, we can assigned a Continent value for each earthquakes on land in 1980s, and plot and bar plot indicating the number of earthquakes on each continent in 1980s. Here thh bar plot shows that there are more earthquakes in South America than North America in 1980s.\n5. Has there been any geographic shifts in the distribution of earthquakes? [10 marks] #code  eq.land  mutate(Earthquake, Continent = latlon2Con(Earthquake$Latitude,Earthquake$Longitude)) eq.land  filter(eq.land, !is.na(Continent)) eq.land.num  eq.land %% count(Year, Continent) %% group_by(Continent) ggplot(eq.land.num, aes(x=Year, y=Continent, fill=n)) + geom_tile() + theme_classic() + labs(title = paste0(\"Earthquakes on land (\", minyear, \"-\", maxyear, \")\"),fill=\"Num\") + scale_x_discrete(breaks = seq(minyear,maxyear,by=5)) + scale_y_discrete(expand = c(0,0)) + scale_fill_distiller(palette = \"YlOrRd\", direction = 1) The above analysis demonstrates the number of earthquakes in each continent from the year of 1965 to 2016. Similarly, here I only considered earthquakes happened on land, using the same function as in the previous question. According to the figure, there is no major shifts of the location(origin continent) of earthquakes in the given time period. Asia and South America constantly have more earthquakes compared to other continents.\n6. Comment on how lessons from Wilke’s Fundementals of Data Visualization were applied to each figure with specific reference to book sections [5 marks] Overall, I tried to produce clean and readable figure, with clear coordinates and readable titles, legends and axis.\n  For the figure illustrating the number of earthquakes on weekdays and weekends: It is a figure to visualize amounts, I chose stacked bar plots. In this way, the figure could display the amount of earthquakes in weekdays and weekend while comparing earthquakes happened in each day, showing more information at the same time. I also assigned an order to the weekdays column so that it will displayed in a more readable way (i.e. following the order of day in a week). Reference: Section 6.2\n  For the third question, I displayed the amount of earthquakes each year to visualize how the frequency of earthquakes (in each year) changed in the given time period. Similar to the second question, here I also visualized the amount, but with more data points. Another potential way is visualizing the trends with smoothed line plot, however, I want readers have a clearer sense of specific numbers without omitting too much information, so I still used the bar plot. This time, in order to give a clearer reference of numbers, I changed to theme_minimal() to display hidden grid lines on the figure. This design will allow readers locate the values of each bar easier while still maintain a clear visualization style. Reference: Section 25, Section 28.3\n  For the 4th question, I used 2 figures:\n    Global distribution of earthquakes in 1980s.\n  Although it is not directly asked, for question involved with further analysis, I prefer to offer the raw data first. This will give reader (and myself) a more general idea of the data, and avoid future misunderstanding or mistakes when further analysis the data. Here, I displayed the raw distribution of earthquakes globally, showing some general knowledge of where the earthquakes usually take place, and leads to further discussion that lots of earthquakes happened in the ocean area, while I only consider earthquakes on land in the following analysis. This will also avoid future questions from readers e.g. why the number of earthquakes counted in the next figure is much smaller compared to the numbers shown in the 2nd and 3rd question.\n  Here I used theme_void() to only display the global landmass and earthquakes location. The color of landmass and earthquakes were carefully chose so that it can clearly distinguish earthquakes from landmass. It might be better to use Robinson Projections so that the high latitude area is less distorted, but I have problems finding this projection in coord_map(), besides we are not focused on high latitude in this question, so I used the default settings. Reference: Section 4.1\n    Number of earthquakes on each continents. Here it’s also required to display “amounts”, so I used the simple bar plots to make the figure clear.\n  For the 5th question, I used a heatmap to illustrate how the number of earthquakes changes on each continent in each year. If there was geographic shift, say, from continent to continent, then it would be easily spotted on the heatmap figure. Besides, I also selected color palette to make the fill colors represent the number values in a more custom way. Reference: Section 6.3, Section 4.2  ",
+  "wordCount" : "1949",
+  "inLanguage": "en",
+  "datePublished": "2023-03-03T00:00:00Z",
+  "dateModified": "2023-03-03T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Anqi Ma"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://maanqi4.github.io/posts/earthquakes/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Anqi Ma",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://maanqi4.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://maanqi4.github.io/" accesskey="h" title="Anqi Ma (Alt + H)">Anqi Ma</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="http://maanqi4.github.io/home/" title="Resume"
+                            aria-label="Resume">Resume</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://maanqi4.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://maanqi4.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://maanqi4.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://maanqi4.github.io/">Home</a>&nbsp;»&nbsp;<a href="http://maanqi4.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      Earthquakes data analysis demo
+    </h1>
+    <div class="post-meta"><span title='2023-03-03 00:00:00 +0000 UTC'>March 3, 2023</span>&nbsp;·&nbsp;10 min&nbsp;·&nbsp;Anqi Ma
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#1-read-the-data-in-and-clean-it-for-analysis-used-the-readr-package-functions-for-reading-and-parsing-data-5-marks">1. Read the data in and clean it for analysis, used the <code>readr</code> package functions for reading and parsing data. [5 marks]</a></li>
+        <li><a href="#2-did-more-earthquakes-happen-on-weekends-or-weekdays-5-marks">2. Did more earthquakes happen on weekends or weekdays? [5 marks]</a></li>
+        <li><a href="#3-has-there-been-any-change-in-the-frequency-of-earthquakes-5-marks">3. Has there been any change in the frequency of earthquakes? [5 marks]</a></li>
+        <li><a href="#4-where-were-there-more-earthquakes-in-the-1980s-south-america-or-north-america-5-marks">4. Where were there more earthquakes in the 1980s, South America or North America? [5 marks]</a></li>
+        <li><a href="#5-has-there-been-any-geographic-shifts-in-the-distribution-of-earthquakes-10-marks">5. Has there been any geographic shifts in the distribution of earthquakes? [10 marks]</a></li>
+        <li><a href="#6-comment-on-how-lessons-from-wilkes-fundementals-of-data-visualization-were-applied-to-each-figure-with-specific-reference-to-book-sections-5-marks">6. Comment on how lessons from Wilke’s Fundementals of Data Visualization were applied to each figure with specific reference to book sections [5 marks]</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><blockquote>
+<p>This is a course assignment for analyze and visualize earthquake data</p>
+</blockquote>
+<h3 id="1-read-the-data-in-and-clean-it-for-analysis-used-the-readr-package-functions-for-reading-and-parsing-data-5-marks">1. Read the data in and clean it for analysis, used the <code>readr</code> package functions for reading and parsing data. [5 marks]<a hidden class="anchor" aria-hidden="true" href="#1-read-the-data-in-and-clean-it-for-analysis-used-the-readr-package-functions-for-reading-and-parsing-data-5-marks">#</a></h3>
+<p>My answer is written here and is explains what I did and why.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">#code </span>
+    <span class="nf">library</span><span class="p">(</span><span class="n">tidyverse</span><span class="p">)</span>
+
+    <span class="c1">## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──</span>
+    <span class="c1">## ✔ ggplot2 3.4.0      ✔ purrr   1.0.0 </span>
+    <span class="c1">## ✔ tibble  3.1.8      ✔ dplyr   1.0.10</span>
+    <span class="c1">## ✔ tidyr   1.2.1      ✔ stringr 1.5.0 </span>
+    <span class="c1">## ✔ readr   2.1.3      ✔ forcats 0.5.2 </span>
+    <span class="c1">## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──</span>
+    <span class="c1">## ✖ dplyr::filter() masks stats::filter()</span>
+    <span class="c1">## ✖ dplyr::lag()    masks stats::lag()</span>
+
+    <span class="c1">#read data</span>
+    <span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">read_csv</span><span class="p">(</span><span class="s">&#34;https://jjvenky.github.io/GG606AW23/database.csv&#34;</span><span class="p">,</span> 
+                     <span class="n">col_types</span> <span class="o">=</span> <span class="nf">cols</span><span class="p">(</span><span class="n">Date</span> <span class="o">=</span> <span class="nf">col_date</span><span class="p">(</span><span class="n">format</span> <span class="o">=</span> <span class="s">&#34;%m/%d/%Y&#34;</span><span class="p">),</span>
+                                      <span class="n">Time</span> <span class="o">=</span> <span class="nf">col_time</span><span class="p">(</span><span class="n">format</span> <span class="o">=</span> <span class="s">&#34;%H:%M:%S&#34;</span><span class="p">)))</span>
+    <span class="c1">#problems(data)</span>
+    <span class="c1">#data[problems(data)$row,]</span>
+    <span class="c1">#as.POSIXct(problems(data)$actual, &#34;%Y-%m-%dT%H:%M:%S&#34;, tz=&#34;UTC&#34;)</span>
+
+    <span class="c1">#check data and omit N/A</span>
+    <span class="nf">if</span><span class="p">(</span><span class="nf">any</span><span class="p">(</span><span class="nf">is.na</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">Date</span><span class="p">))){</span>
+      <span class="n">data</span> <span class="o">&lt;-</span> <span class="nf">filter</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">data</span><span class="o">$</span><span class="n">Date</span><span class="p">))</span>
+    <span class="p">}</span>
+    <span class="n">data</span>
+</code></pre></div><pre><code>## # A tibble: 23,409 × 21
+##    Date       Time     Latitude Longitude Type     Depth Depth…¹ Depth…² Magni…³
+##    &lt;date&gt;     &lt;time&gt;      &lt;dbl&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+##  1 1965-01-02 13:44:18    19.2      146.  Earthqu…  132.      NA      NA     6  
+##  2 1965-01-04 11:29:49     1.86     127.  Earthqu…   80       NA      NA     5.8
+##  3 1965-01-05 18:05:58   -20.6     -174.  Earthqu…   20       NA      NA     6.2
+##  4 1965-01-08 18:49:43   -59.1      -23.6 Earthqu…   15       NA      NA     5.8
+##  5 1965-01-09 13:32:50    11.9      126.  Earthqu…   15       NA      NA     5.8
+##  6 1965-01-10 13:36:32   -13.4      167.  Earthqu…   35       NA      NA     6.7
+##  7 1965-01-12 13:32:25    27.4       87.9 Earthqu…   20       NA      NA     5.9
+##  8 1965-01-15 23:17:42   -13.3      166.  Earthqu…   35       NA      NA     6  
+##  9 1965-01-16 11:32:37   -56.5      -27.0 Earthqu…   95       NA      NA     6  
+## 10 1965-01-17 10:43:17   -24.6      178.  Earthqu…  565       NA      NA     5.8
+## # … with 23,399 more rows, 12 more variables: `Magnitude Type` &lt;chr&gt;,
+## #   `Magnitude Error` &lt;dbl&gt;, `Magnitude Seismic Stations` &lt;dbl&gt;,
+## #   `Azimuthal Gap` &lt;dbl&gt;, `Horizontal Distance` &lt;dbl&gt;,
+## #   `Horizontal Error` &lt;dbl&gt;, `Root Mean Square` &lt;dbl&gt;, ID &lt;chr&gt;, Source &lt;chr&gt;,
+## #   `Location Source` &lt;chr&gt;, `Magnitude Source` &lt;chr&gt;, Status &lt;chr&gt;, and
+## #   abbreviated variable names ¹​`Depth Error`, ²​`Depth Seismic Stations`,
+## #   ³​Magnitude
+</code></pre>
+<p>Here <code>col_types</code> in <code>read_csv</code> function was defined with <code>format</code> to
+match the format of <code>Date</code> and <code>Time</code> in the .csv file.</p>
+<p><strong>Note:</strong></p>
+<p>There are 3 rows in which the <code>Date</code> and <code>Time</code> were written different
+format compared with the rest of the dataset. Although it’s possible to
+convert them to acessible format, for example using
+<code>as.POSIXct(problems(data)$actual, &quot;%Y-%m-%dT%H:%M:%S&quot;, tz=&quot;UTC&quot;)</code>.The
+current method somehow could successfully return the correct <code>Date</code>, and
+the following question doesn’t necessary need the exact time of the
+earthquakes, plus I’m not sure about the timezone in the <code>Date</code> written
+in those 3 rows. So I just ignored those 3 rows as this warning would
+not affect following analysis.</p>
+<h3 id="2-did-more-earthquakes-happen-on-weekends-or-weekdays-5-marks">2. Did more earthquakes happen on weekends or weekdays? [5 marks]<a hidden class="anchor" aria-hidden="true" href="#2-did-more-earthquakes-happen-on-weekends-or-weekdays-5-marks">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">#code </span>
+    <span class="c1">#select Earthquake</span>
+    <span class="n">Earthquake</span> <span class="o">&lt;-</span> <span class="nf">subset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">Type</span> <span class="o">==</span> <span class="s">&#34;Earthquake&#34;</span><span class="p">)</span>
+    <span class="c1">#convert Date to day in a week</span>
+    <span class="n">Earthquake</span><span class="o">$</span><span class="n">wday</span> <span class="o">&lt;-</span> <span class="nf">weekdays</span><span class="p">(</span><span class="n">Earthquake</span><span class="o">$</span><span class="n">Date</span><span class="p">)</span>
+    <span class="c1">#reorder days in week (so it&#39;ll be in good order in figure&#39;s legend)</span>
+    <span class="n">Earthquake</span><span class="o">$</span><span class="n">wday</span> <span class="o">&lt;-</span> <span class="nf">factor</span><span class="p">(</span><span class="n">Earthquake</span><span class="o">$</span><span class="n">wday</span><span class="p">,</span> 
+                              <span class="n">levels</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="s">&#34;Monday&#34;</span><span class="p">,</span><span class="s">&#34;Tuesday&#34;</span><span class="p">,</span><span class="s">&#34;Wednesday&#34;</span><span class="p">,</span><span class="s">&#34;Thursday&#34;</span><span class="p">,</span>
+                                         <span class="s">&#34;Friday&#34;</span><span class="p">,</span><span class="s">&#34;Saturday&#34;</span><span class="p">,</span><span class="s">&#34;Sunday&#34;</span><span class="p">))</span>
+    <span class="c1">#separate weekdays and weekend</span>
+    <span class="n">Earthquake</span> <span class="o">&lt;-</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">Earthquake</span><span class="p">,</span> 
+                         <span class="n">wday_ID</span> <span class="o">=</span> <span class="nf">case_when</span><span class="p">(</span><span class="n">wday</span> <span class="o">==</span> <span class="s">&#34;Sunday&#34;</span> <span class="o">~</span> <span class="s">&#34;Weekends&#34;</span><span class="p">,</span> 
+                                             <span class="n">wday</span> <span class="o">==</span> <span class="s">&#34;Saturday&#34;</span> <span class="o">~</span> <span class="s">&#34;Weekends&#34;</span><span class="p">,</span> 
+                                             <span class="kc">TRUE</span> <span class="o">~</span> <span class="s">&#34;Weekdays&#34;</span><span class="p">))</span>
+    <span class="c1">#check dataset before plotting </span>
+    <span class="c1">#Earthquake</span>
+
+    <span class="c1">#plot</span>
+    <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">Earthquake</span><span class="p">)</span> <span class="o">+</span>
+      <span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">wday_ID</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="n">wday</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="m">1</span><span class="p">)</span> <span class="o">+</span>
+      <span class="nf">theme_classic</span><span class="p">()</span> <span class="o">+</span> <span class="nf">scale_fill_brewer</span><span class="p">(</span><span class="n">palette</span> <span class="o">=</span> <span class="s">&#34;Set3&#34;</span><span class="p">)</span> <span class="o">+</span>
+      <span class="nf">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="s">&#34;Amount of Earthquake happened on Weekdays and Weekends&#34;</span><span class="p">,</span>
+           <span class="n">x</span><span class="o">=</span><span class="s">&#34;&#34;</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="s">&#34;Day in week&#34;</span><span class="p">)</span>
+</code></pre></div><p><img loading="lazy" src="/images/earthquakes/unnamed-chunk-2-1.png" alt=""  />
+</p>
+<p>The above analysis demonstrates the amount of earthquakes happened on
+weekdays and weekends in the dataset. There are significantly more
+earthquakes happened on weekdays, however, when it comes to the number
+of earthquakes per day, it doesn’t show any preference between weekdays
+or weekends. There are 5 days in a week could be counted as weekdays,
+while only 2 days are weekends. If earthquakes are equally distributed
+in every day, then when numbers added up, it will be more earthquakes on
+weekdays than weekends as there are more days in weekdays.</p>
+<h3 id="3-has-there-been-any-change-in-the-frequency-of-earthquakes-5-marks">3. Has there been any change in the frequency of earthquakes? [5 marks]<a hidden class="anchor" aria-hidden="true" href="#3-has-there-been-any-change-in-the-frequency-of-earthquakes-5-marks">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">#code </span>
+    <span class="c1">#create new variable Year</span>
+    <span class="n">Earthquake</span> <span class="o">&lt;-</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">Earthquake</span><span class="p">,</span> <span class="n">Year</span> <span class="o">=</span> <span class="nf">format</span><span class="p">(</span><span class="n">Date</span><span class="p">,</span> <span class="s">&#34;%Y&#34;</span><span class="p">))</span>
+
+    <span class="c1">#(for setting figure axis)</span>
+    <span class="c1">#count minmax of Year and number of earthquakes</span>
+    <span class="n">minyear</span> <span class="o">&lt;-</span> <span class="nf">min</span><span class="p">(</span><span class="n">Earthquake</span><span class="o">$</span><span class="n">Year</span><span class="p">)</span>
+    <span class="n">maxyear</span> <span class="o">&lt;-</span> <span class="nf">max</span><span class="p">(</span><span class="n">Earthquake</span><span class="o">$</span><span class="n">Year</span><span class="p">)</span>
+    <span class="n">counteq</span> <span class="o">&lt;-</span> <span class="n">Earthquake</span> <span class="o">%&gt;%</span> <span class="nf">count</span><span class="p">(</span><span class="n">Earthquake</span><span class="o">$</span><span class="n">Year</span><span class="p">)</span>
+    <span class="n">maxeq</span> <span class="o">&lt;-</span> <span class="nf">max</span><span class="p">(</span><span class="n">counteq</span><span class="o">$</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">maxy</span> <span class="o">&lt;-</span> <span class="nf">ceiling</span><span class="p">(</span><span class="n">maxeq</span><span class="o">/</span><span class="m">100</span><span class="p">)</span><span class="o">*</span><span class="m">100</span>
+
+    <span class="c1">#plot</span>
+    <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">Earthquake</span><span class="p">)</span> <span class="o">+</span> <span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">Year</span><span class="p">),</span><span class="n">fill</span><span class="o">=</span><span class="s">&#34;cornflowerblue&#34;</span><span class="p">)</span> <span class="o">+</span> 
+      <span class="nf">theme_minimal</span><span class="p">()</span> <span class="o">+</span> <span class="nf">scale_fill_brewer</span><span class="p">(</span><span class="n">palette</span> <span class="o">=</span> <span class="s">&#34;Set3&#34;</span><span class="p">)</span> <span class="o">+</span>
+      <span class="nf">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&#34;Amount of earthquake each year (&#34;</span><span class="p">,</span> <span class="n">minyear</span><span class="p">,</span>
+                            <span class="s">&#34;-&#34;</span><span class="p">,</span> <span class="n">maxyear</span><span class="p">,</span> <span class="s">&#34;)&#34;</span><span class="p">))</span> <span class="o">+</span>
+      <span class="nf">scale_x_discrete</span><span class="p">(</span><span class="n">breaks</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="n">minyear</span><span class="p">,</span><span class="n">maxyear</span><span class="p">,</span><span class="n">by</span><span class="o">=</span><span class="m">5</span><span class="p">))</span> <span class="o">+</span> 
+      <span class="nf">scale_y_continuous</span><span class="p">(</span><span class="n">breaks</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">maxy</span><span class="p">,</span><span class="n">by</span><span class="o">=</span><span class="m">100</span><span class="p">),</span> <span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+      <span class="nf">coord_cartesian</span><span class="p">(</span><span class="n">ylim</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="n">maxy</span><span class="p">))</span> 
+</code></pre></div><p><img loading="lazy" src="/images/earthquakes/unnamed-chunk-3-1.png" alt=""  />
+</p>
+<p>The above analysis demonstrates the trend of earthquake from 1965 to
+2016. The number of earthquake in each year showed a steady increase in
+the given time period. Therefore, we concluded that the frequency of
+earthquake in each year has a steady increase between the year of 1965
+and 2016.</p>
+<h3 id="4-where-were-there-more-earthquakes-in-the-1980s-south-america-or-north-america-5-marks">4. Where were there more earthquakes in the 1980s, South America or North America? [5 marks]<a hidden class="anchor" aria-hidden="true" href="#4-where-were-there-more-earthquakes-in-the-1980s-south-america-or-north-america-5-marks">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">#code </span>
+    <span class="nf">library</span><span class="p">(</span><span class="n">maps</span><span class="p">)</span>
+</code></pre></div><pre><code>## 
+## Attaching package: 'maps'
+
+## The following object is masked from 'package:purrr':
+## 
+##     map
+</code></pre>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">#select earthquakes in 1980s</span>
+    <span class="n">eq.1980s</span> <span class="o">&lt;-</span> <span class="nf">filter</span><span class="p">(</span><span class="n">Earthquake</span><span class="p">,</span> <span class="n">Year</span> <span class="o">&gt;=</span> <span class="m">1980</span> <span class="o">&amp;</span> <span class="n">Year</span> <span class="o">&lt;=</span> <span class="m">1989</span><span class="p">)</span>
+    <span class="c1">#eq.1980s</span>
+
+    <span class="c1">#First, plot a scatterplot map with all the earthquakes in 1980s</span>
+    <span class="n">world_map</span> <span class="o">&lt;-</span> <span class="nf">map_data</span><span class="p">(</span><span class="s">&#34;world&#34;</span><span class="p">)</span>
+    <span class="nf">ggplot</span><span class="p">(</span><span class="kc">NULL</span><span class="p">)</span> <span class="o">+</span> 
+      <span class="nf">geom_polygon</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">world_map</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">long</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span><span class="n">group</span><span class="o">=</span><span class="n">group</span><span class="p">),</span> 
+                   <span class="n">fill</span><span class="o">=</span><span class="s">&#34;azure3&#34;</span><span class="p">)</span> <span class="o">+</span> 
+      <span class="nf">geom_point</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">eq.1980s</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Longitude</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Latitude</span><span class="p">),</span> 
+                 <span class="n">color</span> <span class="o">=</span> <span class="s">&#34;cornflowerblue&#34;</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="m">.5</span><span class="p">)</span> <span class="o">+</span>
+      <span class="nf">theme_void</span><span class="p">()</span> <span class="o">+</span>
+      <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Earthquakes in 1980s&#34;</span><span class="p">)</span>
+</code></pre></div><p><img loading="lazy" src="/images/earthquakes/unnamed-chunk-4-1.png" alt=""  />
+</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">## Notice a lot of earthquakes located in ocean, some on land</span>
+    <span class="c1">##define South/North America</span>
+
+    <span class="c1">##only count earthquakes happened on land</span>
+    <span class="c1">##convert (lat,lon) to continent (point in polygon question)</span>
+    <span class="c1">##https://stackoverflow.com/questions/21708488/get-country-and-continent-from-longitude-and-latitude-point-in-r</span>
+    <span class="nf">library</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+    <span class="nf">library</span><span class="p">(</span><span class="n">rworldmap</span><span class="p">)</span>
+</code></pre></div><pre><code>## ### Welcome to rworldmap ###
+
+## For a short introduction type :   vignette('rworldmap')
+</code></pre>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="n">latlon2Con</span> <span class="o">&lt;-</span> <span class="nf">function</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span><span class="n">lon</span><span class="p">){</span>
+      <span class="n">sPDF</span> <span class="o">&lt;-</span> <span class="nf">getMap</span><span class="p">()</span>
+      <span class="n">points</span> <span class="o">=</span> <span class="nf">data.frame</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span><span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">)</span>
+      <span class="n">pointsSP</span> <span class="o">=</span> <span class="nf">SpatialPoints</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">proj4string</span> <span class="o">=</span> <span class="nf">CRS</span><span class="p">(</span><span class="nf">proj4string</span><span class="p">(</span><span class="n">sPDF</span><span class="p">)))</span>
+      <span class="n">indices</span> <span class="o">=</span> <span class="nf">over</span><span class="p">(</span><span class="n">pointsSP</span><span class="p">,</span> <span class="n">sPDF</span><span class="p">)</span>
+      <span class="nf">return</span><span class="p">(</span><span class="n">indices</span><span class="o">$</span><span class="n">REGION</span><span class="p">)</span>
+      <span class="c1">#return(indice$ADMIN)</span>
+    <span class="p">}</span>
+    <span class="n">eq.1980s.land</span> <span class="o">&lt;-</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">eq.1980s</span><span class="p">,</span> 
+                       <span class="n">Continent</span> <span class="o">=</span> <span class="nf">latlon2Con</span><span class="p">(</span><span class="n">eq.1980s</span><span class="o">$</span><span class="n">Latitude</span><span class="p">,</span><span class="n">eq.1980s</span><span class="o">$</span><span class="n">Longitude</span><span class="p">))</span>
+    <span class="n">eq.1980s.land</span> <span class="o">&lt;-</span> <span class="nf">filter</span><span class="p">(</span><span class="n">eq.1980s.land</span><span class="p">,</span> <span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">Continent</span><span class="p">))</span>
+    <span class="nf">ggplot</span><span class="p">(</span><span class="n">data</span> <span class="o">=</span> <span class="n">eq.1980s.land</span><span class="p">)</span> <span class="o">+</span><span class="nf">geom_bar</span><span class="p">(</span><span class="nf">aes</span><span class="p">(</span><span class="n">Continent</span><span class="p">),</span> <span class="n">fill</span><span class="o">=</span><span class="s">&#34;cornflowerblue&#34;</span><span class="p">)</span><span class="o">+</span>
+      <span class="nf">theme_classic</span><span class="p">()</span> <span class="o">+</span> <span class="nf">ggtitle</span><span class="p">(</span><span class="s">&#34;Earthquakes in 1980s (on land)&#34;</span><span class="p">)</span>
+</code></pre></div><p><img loading="lazy" src="/images/earthquakes/unnamed-chunk-4-2.png" alt=""  />
+</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">##2. consider earthquakes both on land and ocean</span>
+    <span class="c1">##if earthquake located in ocean, find the nearest continent</span>
+    <span class="c1">##calculate centriods of each countries</span>
+    <span class="c1">#library(sf)</span>
+    <span class="c1">#world_map_sf &lt;- st_as_sf(world_map, coords = c(&#34;long&#34;,&#34;lat&#34;), crs=4326)</span>
+    <span class="c1">#crs = 4326 means lat lon are interpreted as WGS 84 coordinates</span>
+    <span class="c1">#world_cens &lt;- st_centroid(world_map_sf)</span>
+    <span class="c1">#create index to speed up the nearest function</span>
+    <span class="c1">#grid_index &lt;- st_make_grid(world_cens)</span>
+    <span class="c1">#find nearest centroids </span>
+    <span class="c1">#point &lt;- data.frame(lon=100,lat=23)</span>
+    <span class="c1">#point_sf &lt;- st_as_sf(point, coords = c(&#34;lon&#34;,&#34;lat&#34;), crs=4326,agr=&#34;contant&#34;)</span>
+    <span class="c1">#nearest_points &lt;- st_nearest_points(world_cens,point_sf,index=grid_index)</span>
+    <span class="c1">#still takes too much time and memory, ignore this method!</span>
+    <span class="c1">#nearest_points</span>
+</code></pre></div><p>The above analysis demonstrates the geospatial distribution of
+earthquakes in 1980s and the number of earthquake in each continent.</p>
+<p>First, I demonstrated the raw data of earthquakes in 1980s and their
+distribution. The earthquakes were mostly taken place in the major
+earthquake zone, while some of the earthquakes happened on land, a large
+number of them happened in the ocean area. Here, when identifying the
+origin location(continent) of earthquakes, I excluded those in the
+ocean.</p>
+<p>Idealy, there should be 2 algorithms identifying the origin location of
+the earthquakes: point-in-polygon and finding-nearest-points. After
+experiments, I realized it’s not feasible to calculate nearest points
+using such large dataset on my laptop. Here I modified the function in
+<code>rworldmap</code> package and in <a href="https://stackoverflow.com/questions/21708488/get-country-and-continent-from-longitude-and-latitude-point-in-r">this
+solution</a>.
+The <code>latlon2Con</code> function in the code could decide whether the location
+(indexed by latitude and longitude) falls into a certain country’s
+polygon, and return the continent where that country belongs. However,
+for earthquakes happened in ocean, it will return N/A value.</p>
+<p>With the above function, we can assigned a <code>Continent</code> value for each
+earthquakes on land in 1980s, and plot and bar plot indicating the
+number of earthquakes on each continent in 1980s. Here thh bar plot
+shows that there are more earthquakes in South America than North
+America in 1980s.</p>
+<h3 id="5-has-there-been-any-geographic-shifts-in-the-distribution-of-earthquakes-10-marks">5. Has there been any geographic shifts in the distribution of earthquakes? [10 marks]<a hidden class="anchor" aria-hidden="true" href="#5-has-there-been-any-geographic-shifts-in-the-distribution-of-earthquakes-10-marks">#</a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-r" data-lang="r">    <span class="c1">#code </span>
+    <span class="n">eq.land</span> <span class="o">&lt;-</span> <span class="nf">mutate</span><span class="p">(</span><span class="n">Earthquake</span><span class="p">,</span> <span class="n">Continent</span> <span class="o">=</span> 
+                        <span class="nf">latlon2Con</span><span class="p">(</span><span class="n">Earthquake</span><span class="o">$</span><span class="n">Latitude</span><span class="p">,</span><span class="n">Earthquake</span><span class="o">$</span><span class="n">Longitude</span><span class="p">))</span>
+    <span class="n">eq.land</span> <span class="o">&lt;-</span> <span class="nf">filter</span><span class="p">(</span><span class="n">eq.land</span><span class="p">,</span> <span class="o">!</span><span class="nf">is.na</span><span class="p">(</span><span class="n">Continent</span><span class="p">))</span>
+
+    <span class="n">eq.land.num</span> <span class="o">&lt;-</span> <span class="n">eq.land</span> <span class="o">%&gt;%</span> <span class="nf">count</span><span class="p">(</span><span class="n">Year</span><span class="p">,</span> <span class="n">Continent</span><span class="p">)</span> <span class="o">%&gt;%</span> <span class="nf">group_by</span><span class="p">(</span><span class="n">Continent</span><span class="p">)</span>
+
+    <span class="nf">ggplot</span><span class="p">(</span><span class="n">eq.land.num</span><span class="p">,</span> <span class="nf">aes</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Year</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">Continent</span><span class="p">,</span> <span class="n">fill</span><span class="o">=</span><span class="n">n</span><span class="p">))</span> <span class="o">+</span>
+      <span class="nf">geom_tile</span><span class="p">()</span> <span class="o">+</span> <span class="nf">theme_classic</span><span class="p">()</span> <span class="o">+</span>
+      <span class="nf">labs</span><span class="p">(</span><span class="n">title</span> <span class="o">=</span> <span class="nf">paste0</span><span class="p">(</span><span class="s">&#34;Earthquakes on land (&#34;</span><span class="p">,</span> <span class="n">minyear</span><span class="p">,</span>
+                            <span class="s">&#34;-&#34;</span><span class="p">,</span> <span class="n">maxyear</span><span class="p">,</span> <span class="s">&#34;)&#34;</span><span class="p">),</span><span class="n">fill</span><span class="o">=</span><span class="s">&#34;Num&#34;</span><span class="p">)</span> <span class="o">+</span>
+      <span class="nf">scale_x_discrete</span><span class="p">(</span><span class="n">breaks</span> <span class="o">=</span> <span class="nf">seq</span><span class="p">(</span><span class="n">minyear</span><span class="p">,</span><span class="n">maxyear</span><span class="p">,</span><span class="n">by</span><span class="o">=</span><span class="m">5</span><span class="p">))</span> <span class="o">+</span> 
+      <span class="nf">scale_y_discrete</span><span class="p">(</span><span class="n">expand</span> <span class="o">=</span> <span class="nf">c</span><span class="p">(</span><span class="m">0</span><span class="p">,</span><span class="m">0</span><span class="p">))</span> <span class="o">+</span>
+      <span class="nf">scale_fill_distiller</span><span class="p">(</span><span class="n">palette</span> <span class="o">=</span> <span class="s">&#34;YlOrRd&#34;</span><span class="p">,</span> <span class="n">direction</span> <span class="o">=</span> <span class="m">1</span><span class="p">)</span>
+</code></pre></div><p><img loading="lazy" src="/images/earthquakes/unnamed-chunk-5-1.png" alt=""  />
+</p>
+<p>The above analysis demonstrates the number of earthquakes in each
+continent from the year of 1965 to 2016. Similarly, here I only
+considered earthquakes happened on land, using the same function as in
+the previous question. According to the figure, there is no major shifts
+of the location(origin continent) of earthquakes in the given time
+period. Asia and South America constantly have more earthquakes compared
+to other continents.</p>
+<h3 id="6-comment-on-how-lessons-from-wilkes-fundementals-of-data-visualization-were-applied-to-each-figure-with-specific-reference-to-book-sections-5-marks">6. Comment on how lessons from Wilke’s Fundementals of Data Visualization were applied to each figure with specific reference to book sections [5 marks]<a hidden class="anchor" aria-hidden="true" href="#6-comment-on-how-lessons-from-wilkes-fundementals-of-data-visualization-were-applied-to-each-figure-with-specific-reference-to-book-sections-5-marks">#</a></h3>
+<p>Overall, I tried to produce clean and readable figure, with clear
+coordinates and readable titles, legends and axis.</p>
+<ol>
+<li>
+<p>For the figure illustrating the number of earthquakes on weekdays
+and weekends: It is a figure to visualize amounts, I chose stacked
+bar plots. In this way, the figure could display the amount of
+earthquakes in weekdays and weekend while comparing earthquakes
+happened in each day, showing more information at the same time. I
+also assigned an order to the weekdays column so that it will
+displayed in a more readable way (i.e. following the order of day in
+a week). Reference: <a href="https://clauswilke.com/dataviz/visualizing-amounts.html#grouped-and-stacked-bars">Section
+6.2</a></p>
+</li>
+<li>
+<p>For the third question, I displayed the amount of earthquakes each
+year to visualize how the frequency of earthquakes (in each year)
+changed in the given time period. Similar to the second question,
+here I also visualized the amount, but with more data points.
+Another potential way is visualizing the trends with smoothed line
+plot, however, I want readers have a clearer sense of specific
+numbers without omitting too much information, so I still used the
+bar plot. This time, in order to give a clearer reference of
+numbers, I changed to <code>theme_minimal()</code> to display hidden grid lines
+on the figure. This design will allow readers locate the values of
+each bar easier while still maintain a clear visualization style.
+Reference: <a href="https://clauswilke.com/dataviz/avoid-line-drawings.html">Section
+25</a>,
+<a href="https://clauswilke.com/dataviz/choosing-visualization-software.html#separation-of-content-and-design">Section
+28.3</a></p>
+</li>
+<li>
+<p>For the 4th question, I used 2 figures:</p>
+</li>
+</ol>
+<ul>
+<li>
+<p>Global distribution of earthquakes in 1980s.</p>
+<ul>
+<li>
+<p>Although it is not directly asked, for question involved with
+further analysis, I prefer to offer the raw data first. This
+will give reader (and myself) a more general idea of the data,
+and avoid future misunderstanding or mistakes when further
+analysis the data. Here, I displayed the raw distribution of
+earthquakes globally, showing some general knowledge of where
+the earthquakes usually take place, and leads to further
+discussion that lots of earthquakes happened in the ocean area,
+while I only consider earthquakes on land in the following
+analysis. This will also avoid future questions from readers
+e.g. why the number of earthquakes counted in the next figure is
+much smaller compared to the numbers shown in the 2nd and 3rd
+question.</p>
+</li>
+<li>
+<p>Here I used <code>theme_void()</code> to only display the global landmass
+and earthquakes location. The color of landmass and earthquakes
+were carefully chose so that it can clearly distinguish
+earthquakes from landmass. It might be better to use Robinson
+Projections so that the high latitude area is less distorted,
+but I have problems finding this projection in <code>coord_map()</code>,
+besides we are not focused on high latitude in this question, so
+I used the default settings. Reference: <a href="https://clauswilke.com/dataviz/color-basics.html#color-as-a-tool-to-distinguish">Section
+4.1</a></p>
+</li>
+</ul>
+</li>
+<li>
+<p>Number of earthquakes on each continents. Here it’s also required to
+display “amounts”, so I used the simple bar plots to make the figure
+clear.</p>
+</li>
+</ul>
+<ol start="4">
+<li>For the 5th question, I used a heatmap to illustrate how the number
+of earthquakes changes on each continent in each year. If there was
+geographic shift, say, from continent to continent, then it would be
+easily spotted on the heatmap figure. Besides, I also selected color
+palette to make the fill colors represent the number values in a
+more custom way. Reference: <a href="https://clauswilke.com/dataviz/visualizing-amounts.html#dot-plots-and-heatmaps">Section
+6.3</a>,
+<a href="https://clauswilke.com/dataviz/color-basics.html#color-to-represent-data-values">Section
+4.2</a></li>
+</ol>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://maanqi4.github.io/tags/rstudio/">RStudio</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://maanqi4.github.io/posts/cancensus/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Work with Canadian Census data</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="http://maanqi4.github.io/">Anqi Ma</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

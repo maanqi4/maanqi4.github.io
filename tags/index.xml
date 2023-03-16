@@ -11,13 +11,40 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>RStudio</title>
+      <link>http://maanqi4.github.io/tags/rstudio/</link>
+      <pubDate>Fri, 03 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/tags/rstudio/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>CESM</title>
+      <link>http://maanqi4.github.io/tags/cesm/</link>
+      <pubDate>Thu, 13 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/tags/cesm/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Linux</title>
       <link>http://maanqi4.github.io/tags/linux/</link>
       <pubDate>Thu, 13 Oct 2022 00:00:00 +0000</pubDate>
       
       <guid>http://maanqi4.github.io/tags/linux/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>shell</title>
+      <link>http://maanqi4.github.io/tags/shell/</link>
+      <pubDate>Thu, 13 Oct 2022 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/tags/shell/</guid>
       <description></description>
     </item>
     

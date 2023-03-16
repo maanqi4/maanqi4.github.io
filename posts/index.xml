@@ -11,9 +11,31 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 03 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>[Linux] Generate Short/Long PPE with CESM</title>
+      <title>Earthquakes data analysis demo</title>
+      <link>http://maanqi4.github.io/posts/earthquakes/</link>
+      <pubDate>Fri, 03 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/posts/earthquakes/</guid>
+      <description>This is a course assignment for analyze and visualize earthquake data
+ 1. Read the data in and clean it for analysis, used the readr package functions for reading and parsing data. [5 marks] My answer is written here and is explains what I did and why.
+#code  library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.4.0 ✔ purrr 1.0.0  ## ✔ tibble 3.</description>
+    </item>
+    
+    <item>
+      <title>Work with Canadian Census data</title>
+      <link>http://maanqi4.github.io/posts/cancensus/</link>
+      <pubDate>Wed, 01 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/posts/cancensus/</guid>
+      <description>This is a course assignment demo (GG606 Scientific Data Wrangling)
+  cancensus is a R package that can assess Statistics Canada Census data for Census year 1996, 2001, 2006, 2011, 2016 and 2021. The datasets present information from the Census of Population for various levels of geography, including provinces and territories, census metropolitan areas, communities and census tracts.
+ 1. Installation and retrieve the data vectors list install.packages(&amp;#34;cancensus&amp;#34;) library(cancensus) #view avaliable Census data list_census_datasets() #view regions and vectors in a given dataset list_census_regions(&amp;#34;CA21&amp;#34;) list_census_vectors(&amp;#34;CA21&amp;#34;) #retrieve the data needed #Warning: Cached regions list may be out of date.</description>
+    </item>
+    
+    <item>
+      <title>Generate Short/Long Perturbed Parameter Ensembles (PPE) with CESM</title>
       <link>http://maanqi4.github.io/posts/short-long-experiment-outline/</link>
       <pubDate>Thu, 13 Oct 2022 00:00:00 +0000</pubDate>
       
