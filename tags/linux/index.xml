@@ -11,7 +11,16 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Oct 2022 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 27 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[Demo] A Benchmark for Data-Driven Climate Projections</title>
+      <link>http://maanqi4.github.io/posts/climatebench/</link>
+      <pubDate>Mon, 27 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/posts/climatebench/</guid>
+      <description>Analytic Demo</description>
+    </item>
+    
     <item>
       <title>Generate Short/Long Perturbed Parameter Ensembles (PPE) with CESM</title>
       <link>http://maanqi4.github.io/posts/short-long-experiment-outline/</link>

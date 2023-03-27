@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>[Demo] A Benchmark for Data-Driven Climate Projections | Anqi Ma</title>
+<meta name="keywords" content="Python, Linux, Machine Learning">
+<meta name="description" content="Analytic Demo">
+<meta name="author" content="Anqi Ma">
+<link rel="canonical" href="http://maanqi4.github.io/posts/climatebench/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.4011e96cb50c0badbd5e58bc6d1415a2f58babd783714a3a042388142298609f.css" integrity="sha256-QBHpbLUMC629Xli8bRQVovWLq9eDcUo6BCOIFCKYYJ8=" rel="preload stylesheet" as="style">
+<link rel="icon" href="http://maanqi4.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="http://maanqi4.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="http://maanqi4.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="http://maanqi4.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="http://maanqi4.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<link rel="alternate" hreflang="en" href="http://maanqi4.github.io/posts/climatebench/">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="[Demo] A Benchmark for Data-Driven Climate Projections" />
+<meta property="og:description" content="Analytic Demo" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="http://maanqi4.github.io/posts/climatebench/" /><meta property="og:image" content="http://maanqi4.github.io/papermod-cover.png"/><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-03-27T00:00:00+00:00" />
+<meta property="article:modified_time" content="2023-03-27T00:00:00+00:00" />
+
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="http://maanqi4.github.io/papermod-cover.png"/>
+
+<meta name="twitter:title" content="[Demo] A Benchmark for Data-Driven Climate Projections"/>
+<meta name="twitter:description" content="Analytic Demo"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "http://maanqi4.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "[Demo] A Benchmark for Data-Driven Climate Projections",
+      "item": "http://maanqi4.github.io/posts/climatebench/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "[Demo] A Benchmark for Data-Driven Climate Projections",
+  "name": "[Demo] A Benchmark for Data-Driven Climate Projections",
+  "description": "Analytic Demo",
+  "keywords": [
+    "Python", "Linux", "Machine Learning"
+  ],
+  "articleBody": " This is a analytic walk-through of the following paper: ClimateBench v1.0: A Benchmark for Data-Driven Climate Projections https://doi.org/10.1029/2021MS002954 (Watson-Paris et al., 2022)\n  conda environment The analysis was conducted under a conda virtual environment (esem). I’ll attached the .yml file of the environment together with the assignment, you can install it with conda env create -f esem.yml. Or if you prefer to install it manually, here are the commands I used:\nconda create --name esem python scipy numpy pandas xarray matplotlib cartopy seaborn\npip install netcdf4 #this is better than using conda, less likely have error of .DLL files\npip install \"dask[dataframe]\"\npip install xskillscore\n#you probably don’t need the following if you don’t want to train emulators yourselves\n pip install eofs pip install gpflow pip install -U scikit-learn pip install esem  The last will install the model package used in paper (https://github.com/duncanwp/ESEm/tree/v1.1.0): it will also automatically install the dependent packages tensorflow. Other packages such as keras and scikit-learn are also needed if you want to retrain the emulators from paper. (Because their original code specified hyperparameters using functions in these packages… for percisely reproducing the emulator and generating data, it’s better to use their setting)\ndataset from paper for building emulators  test dataset: https://zenodo.org/record/7064308/files/test.tar.gz?download=1 training dataset: https://zenodo.org/record/7064308/files/train_val.tar.gz?download=1  data that I used to evalute emulators (The important part of the paper is to evaluate results generated from emulators, NOT building emulators! But the authors did not provide emulators' results, instead, he provided the training and testing dataset, listed above. So I downloaded the data, built emulators myself, generated emulators' results using the template and the same packages as the paper…)\n test dataset: https://zenodo.org/record/7064308/files/test.tar.gz?download=1 (This is the same, for comparing emulation with the truth generated from models) outputs_ssp245_prediction_RF.nc; outputs_ssp245_predict_pr90.nc; outputs_ssp245_predict_pr.nc; outputs_ssp245_predict_tas.nc; outputs_ssp245_predict_dtr.nc (These are emulators results I generated using the default template of packages setting)  ClimateBench v1.0: A Benchmark for Data-Driven Climate Projections 1. Introduction  There are a wide range of emission pathways consistent with climate goals; Traditionally, scientists used Earth System Models (ESMs) to simulate those Shared Socioeconomic Pathways (SSPs), and explore what will happen under future scenarios; Potential problems in traditional approach: Earth System Models are expensive to run, and it’s impractical to use expensive models to fully explore the space of possibilities (O’Neill et al., 2016) Solution proposed in the paper: ClimateBench, using a set of baseline machine/statistical learning models to emulate the response to a variety of forcers (potentially exploring a wider range of SSPs in a cheaper way).  Idea and assumptions behind this approach: The state-of-the-art statistical/machine learning models have shown potential to capture nonlinear relationship in long-term climate responses (Mansfield et al., 2020). And these methods are less computational costly compared with ESMs that traditionally used to simulation climate projections. In the paper, these statistical models have been employed as “emulator” using training dataset from CMIP6 outputs. These emulators then can be used as a cheaper but robust alternatives to explore wide range of emission pathways, to predict annual mean global distributions of temperature and precipitation under different unexplored scenarioes.\nThe analytic goals in the paper:\nProviding evidences that statistical emulators are robust in capturing nonlinear relationship in the Earth system (i.e. the emulator can reproduce the targeted output traditionally generated through ESMs)\n Comparing different statisical/machine learning methods that used to build emulators (i.e. benchmarking their performances in emulating climate projections) Evaluating the emulators by assessing whether the emulation results fulfill physical constraints (i.e. the emulated outputs are meanful and are likely not the results of over-fitting)  2. Data and emulator 2.1 Data Input Variables: global mean emissions of carbon dioxide($CO_{2}$) and methane($CH_4$), first 5 principal components of sulfur dioxide($SO_2$) and balck carbon($BC$)\nOutput variables: temperature (surface air temperature); precipitation (total precipitation); diural temperature range (difference in daily maximum and minimum surface air temperature); extreme precipitation (90th percentile of the daily precipitation)\nTask for emulator: predict the output variables using only the input variables under the chosen test scenario ssp245. The emulators will be evaluated based on its prediction skills over 2080-2100.\nTraining dataset for emulator: The training dataset for the emulator comes from the following scenarios: the historical data; ssp126; ssp370; ssp585; and historical data with aerosol (hist-aer) and greenhouse gas (high-GHG). The description of these scenario dataset are listed in the table below:\n   Protocol Experiment Period Notes     ScenarioMIP ssp126 2015-2100 A high ambition scenario designed to produce significantly less than 2° warming by 2100    ssp245 2015-2100 Designed to represent a medium forcing future scenario. This is the test scenario to be held back for evaluation    ssp370 2015-2100 A medium-high forcing scenario with high emissions of near-term climate forcers (NTCF) such as methane and aerosol    ssp585 2015-2100 This scenario represents the high end of the range of future pathways in the IAM literature and leads to a very large forcing of 8.5 Wm−2 in 2100   CMIP6 historical 1850-2014 A simulation using historical emissions of all forcing agents designed to recreate the historically observed climate   DAMIP hist-aer 1850-2014 A historical simulation with varying concentrations for CO2 and other long-lived greenhouse-gases (only)    hist-GHG 1850-2014 A historical simulation only forced by changes in anthropogenic aerosol    In the training process for emulators, they used the input and output variables in each of the selected scenarios as training dataset, and optimized the hyperparameters in the emulator through available optimisation algorithm in the ESEM package.\n2.2 Method in building emulators 2.2.1 Random Forest Tree-based method repeatedly split data into subsets according to its features such that in-subset variance is low and between-subset variance is high. Describing training different trees on different subsets of the data or holding back some of the data dimensions for each individual tree. The Forest makes a prediction by averaging over the predictions of all individual trees.\nTraining Setting:\n training data: global mean emissions of $CO_{2}$ and $CH_4$, first 5 principal components of $SO_2$ and $BC$ The following hyperparameters are tuned using random search of the training data without replacement: number of trees, tree depth, number of samples required to split a node and to be at each leaf node.  2.2.2 Neural Network The chosen architecture consists of a CNN followed by an LSTM built with the Keras library. The CNN includes one convolutional layer with 20 filters, a filter size of 3, and a ReLU activation function. The 3 × 3 pixel filters scan the input images to detect spatial patterns and feed these patterns to the next layer. These next layers are average pooling layers that reduce the spatial dimensionality ahead of the LSTM layer.\nTraining Setting:\n training data time-series is segmented into 10-year chunks, using a moving-time window in one-year increments, leading to 754 training samples of shape (10, 96, 144, 4) corresponding to the number of years, latitude, longitude and then number of variables. trained four different emulators for the four different output variables. not to do any hyperparameter optimization, and all the parameters were chosen manually.  3. walk-through analysis of 2 emulators Here I reproduced the evaluation process for 2 of the baseline-emulators described in the paper (and above).\nThe methods used in the paper to evalute emulators are:\n t-test rmse compare with physical constrained relationships  which are demostrated below:\nimport matplotlib.pyplot as plt import cartopy.crs as ccrs import xarray as xr from glob import glob import seaborn as sns import numpy as np import pandas as pd # read the model data, and emulation data I generated data_path = \"C:\\\\Users\\\\maq\\\\scripts\\\\gg606\\\\data\\\\\" # In order to rerun the script, change the above to wherever the data is stored variables = ['tas', 'dtr', 'pr', 'pr90'] output_ssp245 = xr.open_dataset(data_path + 'outputs_ssp245.nc').rename(diurnal_temperature_range=\"dtr\").mean('member') rf_predictions = xr.open_dataset(data_path + 'outputs_ssp245_prediction_RF.nc').swap_dims(sample='time') rf_predictions = rf_predictions.assign_coords(time=rf_predictions.time+1).rename(diurnal_temperature_range=\"dtr\") nn_predictions = xr.merge([{v: xr.open_dataarray(data_path + \"outputs_ssp245_predict_{}.nc\".format(v))} for v in variables]) # Convert the precip values to mm/day, only rf has done this lol output_ssp245[\"pr\"] *= 86400 output_ssp245[\"pr90\"] *= 86400 nn_predictions[\"pr\"] *= 86400 nn_predictions[\"pr90\"] *= 86400 #Now that we have 3 dataset: one is the original Truth, other 2 are data predicted by emulators models = [output_ssp245, rf_predictions, nn_predictions] model_names = ['output_ssp245','Random Forest', 'Neural Network'] var_names = labels = [\"Temperature (K)\", \"Diurnal temperature range (K)\", \"Precipitation (mm/day)\", \"Extreme precipitation (mm/day)\"] #rf_predictions # t-test def ttest(diff_mean, diff_std, diff_num): from scipy.stats import distributions z = diff_mean / np.sqrt(diff_std ** 2 / diff_num) # use np.abs to get upper tail,  # then multiply by two as this is a two-tailed test p = distributions.t.sf(np.abs(z), diff_num - 1) * 2 return z, p p_level = 0.05 proj = ccrs.Robinson() # this proj is sooooo slow... kwargs = [dict(cmap=\"coolwarm\", vmin=-1, vmax=1), dict(cmap=\"coolwarm\", vmin=-0.5, vmax=0.5), dict(cmap=\"coolwarm\", vmin=-1, vmax=1), dict(cmap=\"coolwarm\", vmin=-2, vmax=2)] with sns.plotting_context(\"talk\"): fig, axes = plt.subplots(4, 2, subplot_kw=dict(projection=proj), figsize=(16, 16), constrained_layout=True) #print(axes) for fig_axes, var, var_name, kws in zip(axes, variables, var_names, kwargs): for ax, model, model_name in zip(fig_axes, models[1:], model_names[1:]): ax.set_title(model_name) #print(model_name, model) diff = (model[var]-models[0][var]).sel(time=slice(2080, 2100)) mean_diff = diff.mean('time') #print(mean_diff) _, p = ttest(mean_diff, diff.std('time'), diff.count('time')) if model_name == 'Neural Network': mean_diff.where(p  p_level).plot(ax=ax, add_labels=False, transform=ccrs.PlateCarree(), cbar_kwargs={\"label\":var_name, \"orientation\":'vertical'}, **kws) else: mean_diff.where(p  p_level).plot(ax=ax, add_labels=False, transform=ccrs.PlateCarree(), add_colorbar=False, **kws) ax.coastlines() Through t-test, we produced maps of the mean difference in the ClimateBench target output variables for 2 baseline emulators against the target values under the test ssp245 scenario averaged between 2080 and 2100. Differences insignificant at the p # rmse from xskillscore import rmse #weight by lat weights = np.cos(np.deg2rad(output_ssp245['tas'].lat)).expand_dims(lon=144).assign_coords(lon=output_ssp245.lon) def global_mean(ds): weights = np.cos(np.deg2rad(ds.lat)) return ds.weighted(weights).mean(['lat', 'lon']) RMSE_S = pd.DataFrame({ name: {var: rmse(output_ssp245[var].sel(time=slice(2080, None)).mean('time'), model[var].sel(time=slice(2080, None)).mean('time'), weights=weights).data/ np.abs(global_mean(output_ssp245[var].sel(time=slice(2080, None)).mean('time')).data) for var in variables} for name, model in zip(model_names[1:], models[1:]) }) RMSE_G = pd.DataFrame({ name: {var: rmse(global_mean(output_ssp245[var].sel(time=slice(2080, None))), global_mean(model[var].sel(time=slice(2080, None)))).data/ np.abs(global_mean(output_ssp245[var].sel(time=slice(2080, None)).mean('time')).data) for var in variables} for name, model in zip(model_names[1:], models[1:]) }) RMSE_T = RMSE_S + 5*RMSE_G merge_rmse = pd.concat([RMSE_S, RMSE_G, RMSE_T], keys=['Spatial', 'Global', 'Total'])[model_names[1:]].T.swaplevel(axis=1)[variables] merge_rmse.style.highlight_min(axis = 0, props='font-weight: bold').format(\"{:.3f}\") #T_8acd0_row0_col9, #T_8acd0_row1_col0, #T_8acd0_row1_col1, #T_8acd0_row1_col2, #T_8acd0_row1_col3, #T_8acd0_row1_col4, #T_8acd0_row1_col5, #T_8acd0_row1_col6, #T_8acd0_row1_col7, #T_8acd0_row1_col8, #T_8acd0_row1_col10, #T_8acd0_row1_col11 { font-weight: bold; }     tas dtr pr pr90    Spatial Global Total Spatial Global Total Spatial Global Total Spatial Global Total     Random Forest 0.108 0.058 0.400 9.195 2.652 22.457 2.524 0.502 5.035 2.682 0.543 5.399   Neural Network 0.102 0.043 0.316 8.493 1.679 16.885 2.191 0.209 3.235 2.765 0.318 4.356    The primary metrics the evaluate emulators is the normalized, global mean root-mean square error (NRMSE). It is a metric the quantify the deviation between emulated output variables and the trageted output variables in the test scenario. The smaller RMSE value is, the lesser error the emulator is produced.\nIn the paper, they constructed spatial, global and total NRMSE in the following forms:\nSpatial NRMSE: $$NRMSE_s = \\sqrt{t - |y{i,j,t,n}|{n,t})^2} / |{i,j}|_{t,n}$$\nGlobal NRMSE: $$NRMSE_g = \\sqrt{|( - {n})^2|{t}} / ||_{t,n}$$\nTotal NRMSE: $$NRMSE_t = NRMSE_s + \\alpha * NRMSE_g$$\n$$ indicated the global mean with a weighting function that accounts for the decreasing grid-cell area toward the poles\n$$ = \\frac{1}{N_{lat}N_{lon}} \\sum_{i}^{N_{lat}} \\sum_{j}^{N_{lon}} cos(lat(i))x_{i,j}$$\n$\\alpha$ is a defined weight coefficient and $\\alpha = 5$ in this paper.\nAs shown in the table above, the neural network emulator seems to perform better in terms of predicting temperature and precipitation changes. In most targeted value and most metrics, the neural network emulator tends to score a smaller RMSE and has a lesser difference between its emulations and original model simulations.\n# Clausius-Clapeyron relationship and energy conservation considerations baseline_precip = 2.335 with sns.plotting_context(\"talk\"): x = np.linspace(0, 2.5, 100) fig, ax = plt.subplots(1, 1, figsize=(10, 8)) for model, model_name in zip(models, model_names): smooth = global_mean(model).coarsen(time=5, boundary='pad').mean().dropna('time') x_, y_ = smooth['tas'], smooth['pr']/baseline_precip*100 s=ax.scatter(x_.sel(time=slice(2030, None)), y_.sel(time=slice(2030, None)), label=model_name) plt.plot(x, x*6, label=\"Clausius-Clapeyron (6%/K)\", ls='-', c='k') plt.plot(x, x*2-1, label=\"Energetic constraint (2%/K)\", ls='--', c='r') plt.setp(plt.gca(), xlabel=\"Temperature change (K)\", ylabel=\"Precipitation change (%)\", xlim=[0, 2.5], ylim=[0, 4]) plt.legend(loc='upper left') One common concern on applying statistical emulators on Earth system modelling is their abilities to capture and demostrate the physical relationships, whether emulators are overfitted on the existed dataset. In the paper, they try to demostrate the trustworthyness of emulator by assessing whether emulations can capture the same relationship under physical constraints. Particularly, they chose Clausius-Clapeyron relationship to assess. This relationship refers to relative change in global mean precipitation as a function of global mean temperature change. In simple atmospheric physics, Clausius-Clapeyron relationship could be explained as, as the air temperature increases, the water vapor needs more exchange of latent heat to complete a phase transition (precipitation) than previously. The atmosphere has more ability to hold water content under a higher temperature, and the atmospheric water content increases by between 6 and 7% per 1 K of temperature changes if we only consider precipitation changes in a local air mass.\nHowever, in the real Earth system, we also need to consider the energy constraints when assessing global precipitation changes. The global precipitation changes will be balanced by the radiative cooling from the cloud (Pendergrass \u0026 Hartmann, 2013) and the relative change of global precipitaion under temperature change will be around 2% per 1 K.\nThe above figure assessed the predicted temperature changes vs relative global precipitation changes in emulations and simulations results. The slope of the red dash line indicated the ideal relationship of temperature and precipitation. The figure shows a scatter distribution of the relative changes in precipitation vs temperature, if the slope/tendency of the data close to the slope of the red line, it indicates that the changes predicted in emulations is close to the ideal physical relationship. The figure indicated that teh neural network emulator perform better in terms of capturing the physical relationship between changes in global precipitation and temperature, and its predicted relationship is close to both the ideal value and the model simulation results under targeted SSP245 scenario.\n4. Critique 4.1 Data The data used in the paper to construct emulators came from validated peer-review papers and projects using Earth system modelling to perform climate projection under given future scenarios. These model simulations data are quite assessible and the quality of data is very good.\nHowever, the trained emulator and emulations results used in the paper for analysis is not provided. In order to reproduce the paper, I need to use the ML algorithm in given packages and the author’s hyperparameters, with the same model simulation data to train the emulator myself. This created a bit of barriers in reproducing the paper. It is still possible to reproduce the paper, and the results from the paper are validated through my reproductions.\n4.2 method 4.2.1 Emulator As the goal of this paper is to perform a benchmarking work and assess different methods to construct emulator, the selection of specific method for emulators are therefore important. In the paper, the assessed emulators are all constructed using popular and powerful machine learning method that have been applied in emulating nonlinearity relationship in the Earth system, thus made the emulators used in this research more applicable to the task.\nThe process of contructing emulators are also following similar approaches in the given field where the relationships between emitted greenhouse gases and temperature/precipitation changes have been used to construct the emulators. The hyperpaparmeters selected for each emulator are reasonable and listed in its appendix, and the used packages are well-constructed and assessible from GitHub, which makes the reproduction processes for this paper easier.\nIn terms of emulation itself, the emulators were employed in an interpretation problems, where a boarder range of SSPs are used in training and only one targeted SSPs (ssp245) within the range is used for testing. Using statistical/machine learning models for interpretation is a safer approach compared with for exterpolation problems, and could potentially avoid overfitting. However, the selected SSPs are of a quite small range, and the data employed in training are not fully independent. This is part of the issue from limited model simulations to explore SSPs, and also comes from the time dependent nature in the Earth system itself, where the variable in one timestep is relevant to its previous timesteps. Therefore, although the authors used several SSPs simulations and their data on different timesteps for training, the dataset are not entirely independent and might affect the emulators' results.\n4.2.2 Evaluation The methods used for evaluations are quite trustworthy and useful.\nThe authors employed Student’s T-test to assess whether there are significant difference bvetween emulations and simulations. By showing maps of differences, it is clear for readers to find out the spatial bias structures for each emulator, and potentially help deliver a better illustration for emulators' biases. In terms of specific explanation for t-test (and its normal distribution approximation), the author did not include a detailed explantion but pointed to a book of statistics. This is probably because t-test are widely used in the atmospheric science and it’s more efficient to assume readers understand this commonn method.\nThe RMSE metrics are a clear and straight-forward way to quantify the errors produced by emulators, which sucessfully provide a numeric value for evaluation and fulfill the gaps from spatial maps of t-test difference. However, the authors did not provide a detailed explanation for each different RMSE values they constructed, and they did not explain why they favor one contructed RMSE metrics over another. The Spatial and Global RMSE used in the paper are only differed in when to perform an average obver time dimention (before or after calculating the difference), and whether the average process neglect time variability in the selected timeframes. As the task for emulators in this paper is the prediction the targeted temperature and precipitation changes in a given period, and the time variability in the atmosphere is not the first priority in this question. Nevertheless, the explanations about different RMSE metrics used in the research could still be useful.\nLastly, assessing the relative relationship between global precipitation and temperature changes is a good way to outline the ability of emulators to capture physical relationship under energy constraints. Given that the targeted outputs in the research are either precipitation or temperature, the selected relationship here is useful for examination, and it’s smart to demonstrate this through a scatterplot which fully illustrate the relationship between 2 variables.\n4.3 Structure and layouts The style of the figure in the paper is quite clear and appearing, and fulfill the common requirement in scientific publication. Apart from benchmarking different emulators, the paper also carries an introduction for readers that are not specialized in emulation and calibration. Therefore, in the first half of teh paper, the authors took quite an effort to introduce to background of the research, which dataset is acquired and which emulator has been employed, and also illustrate the characteristics of the dataset with several figures. These figure are not directly used for analysis, but for introduction of the background and dataset, which may create a clearer introdution but also push the first analytic figure to Figure 4 in the paper. Therefore, in this analytic demo, I selected the useful figure for benchmarking and evaluating emulators, in a concise way. Overall, the original paper is quite informatic and provide a nice demonstration for benchmarking and evaluating selected emulators for climate projection.\nReference  Mansfield, L. A., Nowack, P. J., Kasoar, M., Everitt, R. G., Collins, W. J., \u0026 Voulgarakis, A. (2020). Predicting global patterns of long-term climate change from short-term simulations using machine learning. NPJ Climate and Atmospheric Science, 3(1), 44. https://doi.org/10.1038/s41612-020-00148-5 O’Neill, B. C., Tebaldi, C., Vuuren, D. P., van Eyring, V., Friedlingstein, P., Hurtt, G., et al. (2016). The scenario model intercomparison project (ScenarioMIP) for CMIP6. Geoscientific Model Development, 9, 3461–3482. https://doi.org/10.5194/gmd-9-3461-2016 Pendergrass, A. G., \u0026 Hartmann, D. L. (2013). The atmospheric energy constraint on global-mean precipitation change. Journal of Climate, 27(2), 130916120136005. https://doi.org/10.1175/jcli-d-13-00163.1 Watson-Parris, D., Williams, A., Deaconu, L., \u0026 Stier, P. (2021). Model calibration using ESEm v1.1.0 – an open, scalable Earth system emulator. Geoscientific Model Development, 14(12), 7659–7672. https://doi.org/10.5194/gmd-14-7659-2021 Watson-Parris, D., Rao, Y., Olivié, D., Seland, Ø., Nowack, P., Camps-Valls, G., Stier, P., Bouabid, S., Dewey, M., Fons, E., Gonzalez, J., Harder, P., Jeggle, K., Lenhardt, J., Manshausen, P., Novitasari, M., Ricard, L., \u0026 Roesch, C. (2022). ClimateBench v1.0: A Benchmark for Data-Driven Climate Projections. Journal of Advances in Modeling Earth Systems, 14(10), e2021MS002954. https://doi.org/10.1029/2021MS002954  ",
+  "wordCount" : "3392",
+  "inLanguage": "en",
+  "datePublished": "2023-03-27T00:00:00Z",
+  "dateModified": "2023-03-27T00:00:00Z",
+  "author":{
+    "@type": "Person",
+    "name": "Anqi Ma"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "http://maanqi4.github.io/posts/climatebench/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Anqi Ma",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "http://maanqi4.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="http://maanqi4.github.io/" accesskey="h" title="Anqi Ma (Alt + H)">Anqi Ma</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+                <ul class="lang-switch"><li>|</li>
+                    <li>
+                        <a href="http://maanqi4.github.io/home/" title="Resume"
+                            aria-label="Resume">Resume</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="http://maanqi4.github.io/archives" title="Archive">
+                    <span>Archive</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://maanqi4.github.io/search/" title="Search (Alt &#43; /)" accesskey=/>
+                    <span>Search</span>
+                </a>
+            </li>
+            <li>
+                <a href="http://maanqi4.github.io/tags/" title="Tags">
+                    <span>Tags</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="http://maanqi4.github.io/">Home</a>&nbsp;»&nbsp;<a href="http://maanqi4.github.io/posts/">Posts</a></div>
+    <h1 class="post-title">
+      [Demo] A Benchmark for Data-Driven Climate Projections
+    </h1>
+    <div class="post-description">
+      Analytic Demo
+    </div>
+    <div class="post-meta"><span title='2023-03-27 00:00:00 +0000 UTC'>March 27, 2023</span>&nbsp;·&nbsp;16 min&nbsp;·&nbsp;Anqi Ma
+
+</div>
+  </header> <div class="toc">
+    <details >
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#climatebench-v10-a-benchmark-for-data-driven-climate-projections">ClimateBench v1.0: A Benchmark for Data-Driven Climate Projections</a>
+      <ul>
+        <li><a href="#1-introduction">1. Introduction</a></li>
+        <li><a href="#2-data-and-emulator">2. Data and emulator</a></li>
+        <li><a href="#3-walk-through-analysis-of-2-emulators">3. walk-through analysis of 2 emulators</a></li>
+        <li><a href="#4-critique">4. Critique</a></li>
+        <li><a href="#reference">Reference</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><blockquote>
+<p>This is a analytic walk-through of the following paper:
+ClimateBench v1.0: A Benchmark for Data-Driven Climate Projections
+<a href="https://doi.org/10.1029/2021MS002954">https://doi.org/10.1029/2021MS002954</a> (Watson-Paris et al., 2022)</p>
+</blockquote>
+<hr>
+<h4 id="conda-environment">conda environment<a hidden class="anchor" aria-hidden="true" href="#conda-environment">#</a></h4>
+<p>The analysis was conducted under a conda virtual environment (esem). I&rsquo;ll attached the .yml file of the environment together with the assignment, you can install it with <code>conda env create -f esem.yml</code>. Or if you prefer to install it manually, here are the commands I used:</p>
+<p><code>conda create --name esem python scipy numpy pandas xarray matplotlib cartopy seaborn</code></p>
+<p><code>pip install netcdf4</code> #this is better than using conda, less likely have error of .DLL files</p>
+<p><code>pip install &quot;dask[dataframe]&quot;</code></p>
+<p><code>pip install xskillscore</code></p>
+<p>#you probably don&rsquo;t need the following if you don&rsquo;t want to train emulators yourselves</p>
+<ul>
+<li><code>pip install eofs</code></li>
+<li><code>pip install gpflow</code></li>
+<li><code>pip install -U scikit-learn</code></li>
+<li><code>pip install esem</code></li>
+</ul>
+<p>The last will install the model package used in paper (<a href="https://github.com/duncanwp/ESEm/tree/v1.1.0)">https://github.com/duncanwp/ESEm/tree/v1.1.0)</a>: it will also automatically install the dependent packages tensorflow. Other packages such as keras and scikit-learn are also needed if you want to retrain the emulators from paper. (Because their original code specified hyperparameters using functions in these packages&hellip; for percisely reproducing the emulator and generating data, it&rsquo;s better to use their setting)</p>
+<h4 id="dataset-from-paper-for-building-emulators">dataset from paper for building emulators<a hidden class="anchor" aria-hidden="true" href="#dataset-from-paper-for-building-emulators">#</a></h4>
+<ul>
+<li>test dataset: <a href="https://zenodo.org/record/7064308/files/test.tar.gz?download=1">https://zenodo.org/record/7064308/files/test.tar.gz?download=1</a></li>
+<li>training dataset: <a href="https://zenodo.org/record/7064308/files/train_val.tar.gz?download=1">https://zenodo.org/record/7064308/files/train_val.tar.gz?download=1</a></li>
+</ul>
+<h4 id="data-that-i-used-to-evalute-emulators">data that I used to evalute emulators<a hidden class="anchor" aria-hidden="true" href="#data-that-i-used-to-evalute-emulators">#</a></h4>
+<p>(The important part of the paper is to evaluate results generated from emulators, NOT building emulators! But the authors did not provide emulators' results, instead, he provided the training and testing dataset, listed above. So I downloaded the data, built emulators myself, generated emulators' results using the template and the same packages as the paper&hellip;)</p>
+<ul>
+<li>test dataset: <a href="https://zenodo.org/record/7064308/files/test.tar.gz?download=1">https://zenodo.org/record/7064308/files/test.tar.gz?download=1</a> (This is the same, for comparing emulation with the <em>truth</em> generated from models)</li>
+<li>outputs_ssp245_prediction_RF.nc; outputs_ssp245_predict_pr90.nc; outputs_ssp245_predict_pr.nc; outputs_ssp245_predict_tas.nc; outputs_ssp245_predict_dtr.nc (These are emulators results I generated using the default template of packages setting)</li>
+</ul>
+<h2 id="climatebench-v10-a-benchmark-for-data-driven-climate-projections">ClimateBench v1.0: A Benchmark for Data-Driven Climate Projections<a hidden class="anchor" aria-hidden="true" href="#climatebench-v10-a-benchmark-for-data-driven-climate-projections">#</a></h2>
+<h3 id="1-introduction">1. Introduction<a hidden class="anchor" aria-hidden="true" href="#1-introduction">#</a></h3>
+<ul>
+<li>There are a wide range of emission pathways consistent with climate goals;</li>
+<li>Traditionally, scientists used Earth System Models (ESMs) to simulate those Shared Socioeconomic Pathways (SSPs), and explore what will happen under future scenarios;</li>
+<li>Potential problems in traditional approach: Earth System Models are expensive to run, and it&rsquo;s impractical to use expensive models to <strong>fully</strong> explore the space of possibilities (<a href="https://gmd.copernicus.org/articles/9/3461/2016/">O&rsquo;Neill et al., 2016</a>)</li>
+<li>Solution proposed in the paper: <strong>ClimateBench</strong>, using a set of baseline machine/statistical learning models to emulate the response to a variety of forcers (potentially exploring a wider range of SSPs in a cheaper way).</li>
+</ul>
+<p><strong>Idea and assumptions behind this approach</strong>: The state-of-the-art statistical/machine learning models have shown potential to capture nonlinear relationship in long-term climate responses (<a href="https://www.nature.com/articles/s41612-020-00148-5">Mansfield et al., 2020</a>). And these methods are less computational costly compared with ESMs that traditionally used to simulation climate projections. In the paper, these statistical models have been employed as &ldquo;emulator&rdquo; using training dataset from CMIP6 outputs. These emulators then can be used as a <em>cheaper but robust</em> alternatives to explore wide range of emission pathways, to predict annual mean global distributions of temperature and precipitation under different unexplored scenarioes.</p>
+<p><strong>The analytic goals in the paper</strong>:</p>
+<p>Providing evidences that statistical emulators are robust in capturing nonlinear relationship in the Earth system (i.e. the emulator can reproduce the targeted output traditionally generated through ESMs)</p>
+<ul>
+<li>Comparing different statisical/machine learning methods that used to build emulators (i.e. benchmarking their performances in emulating climate projections)</li>
+<li>Evaluating the emulators by assessing whether the emulation results fulfill physical constraints (i.e. the emulated outputs are meanful and are likely not the results of over-fitting)</li>
+</ul>
+<h3 id="2-data-and-emulator">2. Data and emulator<a hidden class="anchor" aria-hidden="true" href="#2-data-and-emulator">#</a></h3>
+<h4 id="21-data">2.1 Data<a hidden class="anchor" aria-hidden="true" href="#21-data">#</a></h4>
+<p><strong>Input Variables:</strong> global mean emissions of carbon dioxide($CO_{2}$) and methane($CH_4$), first 5 principal components of sulfur dioxide($SO_2$) and balck carbon($BC$)</p>
+<p><strong>Output variables:</strong> temperature (surface air temperature); precipitation (total precipitation); diural temperature range (difference in daily maximum and minimum surface air temperature); extreme precipitation (90th percentile of the daily precipitation)</p>
+<p><strong>Task for emulator:</strong> predict the output variables using only the input variables under the chosen test scenario ssp245. The emulators will be evaluated based on its prediction skills over 2080-2100.</p>
+<p><strong>Training dataset for emulator:</strong> The training dataset for the emulator comes from the following scenarios: the historical data; ssp126; ssp370; ssp585; and historical data with aerosol (hist-aer) and greenhouse gas (high-GHG). The description of these scenario dataset are listed in the table below:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">Protocol</th>
+<th style="text-align:center">Experiment</th>
+<th style="text-align:center">Period</th>
+<th style="text-align:center">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">ScenarioMIP</td>
+<td style="text-align:center">ssp126</td>
+<td style="text-align:center">2015-2100</td>
+<td style="text-align:center">A high ambition scenario designed to produce significantly less than 2° warming by 2100</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"><em>ssp245</em></td>
+<td style="text-align:center">2015-2100</td>
+<td style="text-align:center">Designed to represent a medium forcing future scenario. <em>This is the test scenario to be held back for evaluation</em></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">ssp370</td>
+<td style="text-align:center">2015-2100</td>
+<td style="text-align:center">A medium-high forcing scenario with high emissions of near-term climate forcers (NTCF) such as methane and aerosol</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">ssp585</td>
+<td style="text-align:center">2015-2100</td>
+<td style="text-align:center">This scenario represents the high end of the range of future pathways in the IAM literature and leads to a very large forcing of 8.5 Wm−2 in 2100</td>
+</tr>
+<tr>
+<td style="text-align:center">CMIP6</td>
+<td style="text-align:center">historical</td>
+<td style="text-align:center">1850-2014</td>
+<td style="text-align:center">A simulation using historical emissions of all forcing agents designed to recreate the historically observed climate</td>
+</tr>
+<tr>
+<td style="text-align:center">DAMIP</td>
+<td style="text-align:center">hist-aer</td>
+<td style="text-align:center">1850-2014</td>
+<td style="text-align:center">A historical simulation with varying concentrations for CO2 and other long-lived greenhouse-gases (only)</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">hist-GHG</td>
+<td style="text-align:center">1850-2014</td>
+<td style="text-align:center">A historical simulation only forced by changes in anthropogenic aerosol</td>
+</tr>
+</tbody>
+</table>
+<p>In the training process for emulators, they used the input and output variables in each of the selected scenarios as training dataset, and optimized the hyperparameters in the emulator through available optimisation algorithm in the ESEM package.</p>
+<h4 id="22-method-in-building-emulators">2.2 Method in building emulators<a hidden class="anchor" aria-hidden="true" href="#22-method-in-building-emulators">#</a></h4>
+<h5 id="221-random-forest">2.2.1 Random Forest<a hidden class="anchor" aria-hidden="true" href="#221-random-forest">#</a></h5>
+<p>Tree-based method repeatedly split data into subsets according to its features such that in-subset variance is low and between-subset variance is high. Describing training different trees on different subsets of the data or holding back some of the data dimensions for each individual tree. The Forest makes a prediction by averaging over the predictions of all individual trees.</p>
+<p><strong>Training Setting:</strong></p>
+<ul>
+<li>training data: global mean emissions of $CO_{2}$ and $CH_4$, first 5 principal components of $SO_2$ and $BC$</li>
+<li>The following hyperparameters are tuned using random search of the training data without replacement: number of trees, tree depth, number of samples required to split a node and to be at each leaf node.</li>
+</ul>
+<h5 id="222-neural-network">2.2.2 Neural Network<a hidden class="anchor" aria-hidden="true" href="#222-neural-network">#</a></h5>
+<p>The chosen architecture consists of a CNN followed by an LSTM built with the Keras library. The CNN includes one convolutional layer with 20 filters, a filter size of 3, and a ReLU activation function. The 3 × 3 pixel filters scan the input images to detect spatial patterns and feed these patterns to the next layer. These next layers are average pooling layers that reduce the spatial dimensionality ahead of the LSTM layer.</p>
+<p><strong>Training Setting:</strong></p>
+<ul>
+<li>training data time-series is segmented into 10-year chunks, using a moving-time window in one-year increments, leading to 754 training samples of shape (10, 96, 144, 4) corresponding to the number of years, latitude, longitude and then number of variables.</li>
+<li>trained four different emulators for the four different output variables.</li>
+<li>not to do any hyperparameter optimization, and all the parameters were chosen manually.</li>
+</ul>
+<h3 id="3-walk-through-analysis-of-2-emulators">3. walk-through analysis of 2 emulators<a hidden class="anchor" aria-hidden="true" href="#3-walk-through-analysis-of-2-emulators">#</a></h3>
+<p>Here I reproduced the evaluation process for 2 of the baseline-emulators described in the paper (and above).</p>
+<p>The methods used in the paper to evalute emulators are:</p>
+<ol>
+<li>t-test</li>
+<li>rmse</li>
+<li>compare with physical constrained relationships</li>
+</ol>
+<p>which are demostrated below:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">cartopy.crs</span> <span class="k">as</span> <span class="nn">ccrs</span>
+<span class="kn">import</span> <span class="nn">xarray</span> <span class="k">as</span> <span class="nn">xr</span>
+<span class="kn">from</span> <span class="nn">glob</span> <span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># read the model data, and emulation data I generated</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="s2">&#34;C:</span><span class="se">\\</span><span class="s2">Users</span><span class="se">\\</span><span class="s2">maq</span><span class="se">\\</span><span class="s2">scripts</span><span class="se">\\</span><span class="s2">gg606</span><span class="se">\\</span><span class="s2">data</span><span class="se">\\</span><span class="s2">&#34;</span>
+<span class="c1"># In order to rerun the script, change the above to wherever the data is stored</span>
+
+<span class="n">variables</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tas&#39;</span><span class="p">,</span> <span class="s1">&#39;dtr&#39;</span><span class="p">,</span> <span class="s1">&#39;pr&#39;</span><span class="p">,</span> <span class="s1">&#39;pr90&#39;</span><span class="p">]</span>
+<span class="n">output_ssp245</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">data_path</span>  <span class="o">+</span> <span class="s1">&#39;outputs_ssp245.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">diurnal_temperature_range</span><span class="o">=</span><span class="s2">&#34;dtr&#34;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;member&#39;</span><span class="p">)</span>
+<span class="n">rf_predictions</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataset</span><span class="p">(</span><span class="n">data_path</span>  <span class="o">+</span> <span class="s1">&#39;outputs_ssp245_prediction_RF.nc&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">swap_dims</span><span class="p">(</span><span class="n">sample</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+<span class="n">rf_predictions</span> <span class="o">=</span> <span class="n">rf_predictions</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">rf_predictions</span><span class="o">.</span><span class="n">time</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">diurnal_temperature_range</span><span class="o">=</span><span class="s2">&#34;dtr&#34;</span><span class="p">)</span>
+<span class="n">nn_predictions</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">merge</span><span class="p">([{</span><span class="n">v</span><span class="p">:</span> <span class="n">xr</span><span class="o">.</span><span class="n">open_dataarray</span><span class="p">(</span><span class="n">data_path</span>  <span class="o">+</span> <span class="s2">&#34;outputs_ssp245_predict_</span><span class="si">{}</span><span class="s2">.nc&#34;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">v</span><span class="p">))}</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">])</span>
+<span class="c1"># Convert the precip values to mm/day, only rf has done this lol</span>
+<span class="n">output_ssp245</span><span class="p">[</span><span class="s2">&#34;pr&#34;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">86400</span>
+<span class="n">output_ssp245</span><span class="p">[</span><span class="s2">&#34;pr90&#34;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">86400</span>
+<span class="n">nn_predictions</span><span class="p">[</span><span class="s2">&#34;pr&#34;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">86400</span>
+<span class="n">nn_predictions</span><span class="p">[</span><span class="s2">&#34;pr90&#34;</span><span class="p">]</span> <span class="o">*=</span> <span class="mi">86400</span>
+<span class="c1">#Now that we have 3 dataset: one is the original Truth, other 2 are data predicted by emulators</span>
+<span class="n">models</span> <span class="o">=</span> <span class="p">[</span><span class="n">output_ssp245</span><span class="p">,</span> <span class="n">rf_predictions</span><span class="p">,</span> <span class="n">nn_predictions</span><span class="p">]</span>
+<span class="n">model_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;output_ssp245&#39;</span><span class="p">,</span><span class="s1">&#39;Random Forest&#39;</span><span class="p">,</span> <span class="s1">&#39;Neural Network&#39;</span><span class="p">]</span>
+<span class="n">var_names</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&#34;Temperature (K)&#34;</span><span class="p">,</span> <span class="s2">&#34;Diurnal temperature range (K)&#34;</span><span class="p">,</span> <span class="s2">&#34;Precipitation (mm/day)&#34;</span><span class="p">,</span> <span class="s2">&#34;Extreme precipitation (mm/day)&#34;</span><span class="p">]</span>
+
+<span class="c1">#rf_predictions</span>
+</code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># t-test</span>
+<span class="k">def</span> <span class="nf">ttest</span><span class="p">(</span><span class="n">diff_mean</span><span class="p">,</span> <span class="n">diff_std</span><span class="p">,</span> <span class="n">diff_num</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">distributions</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">diff_mean</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">diff_std</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="n">diff_num</span><span class="p">)</span>
+    <span class="c1"># use np.abs to get upper tail, </span>
+    <span class="c1"># then multiply by two as this is a two-tailed test</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">distributions</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="n">diff_num</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="k">return</span> <span class="n">z</span><span class="p">,</span> <span class="n">p</span>
+
+<span class="n">p_level</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+<span class="n">proj</span> <span class="o">=</span> <span class="n">ccrs</span><span class="o">.</span><span class="n">Robinson</span><span class="p">()</span> <span class="c1"># this proj is sooooo slow...</span>
+<span class="n">kwargs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&#34;coolwarm&#34;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&#34;coolwarm&#34;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&#34;coolwarm&#34;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="nb">dict</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s2">&#34;coolwarm&#34;</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mi">2</span><span class="p">)]</span>
+<span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">plotting_context</span><span class="p">(</span><span class="s2">&#34;talk&#34;</span><span class="p">):</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">subplot_kw</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">projection</span><span class="o">=</span><span class="n">proj</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1">#print(axes)</span>
+    <span class="k">for</span> <span class="n">fig_axes</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">var_name</span><span class="p">,</span> <span class="n">kws</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">var_names</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">fig_axes</span><span class="p">,</span> <span class="n">models</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">model_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
+            <span class="c1">#print(model_name, model)</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">-</span><span class="n">models</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">var</span><span class="p">])</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="mi">2100</span><span class="p">))</span> 
+            <span class="n">mean_diff</span> <span class="o">=</span> <span class="n">diff</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+            <span class="c1">#print(mean_diff)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">ttest</span><span class="p">(</span><span class="n">mean_diff</span><span class="p">,</span> <span class="n">diff</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">),</span> <span class="n">diff</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">model_name</span> <span class="o">==</span> <span class="s1">&#39;Neural Network&#39;</span><span class="p">:</span>
+                <span class="n">mean_diff</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">p_level</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">add_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="n">cbar_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&#34;label&#34;</span><span class="p">:</span><span class="n">var_name</span><span class="p">,</span> <span class="s2">&#34;orientation&#34;</span><span class="p">:</span><span class="s1">&#39;vertical&#39;</span><span class="p">},</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mean_diff</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="n">p_level</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">add_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">ccrs</span><span class="o">.</span><span class="n">PlateCarree</span><span class="p">(),</span> <span class="n">add_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kws</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">coastlines</span><span class="p">()</span>
+</code></pre></div><p><img loading="lazy" src="/images/ClimateBench/output_3_0.png" alt=""  />
+</p>
+<p>Through t-test, we produced maps of the mean difference in the ClimateBench target output variables for 2 baseline emulators against the target values under the test ssp245 scenario averaged between 2080 and 2100. Differences insignificant at the p &lt; 5% level are masked from the plots. The figure shows a similar bias structure of the selected 2 emulator. For example, both emulators tend to over predict the temperature in the northern hemisphere, and underpredict the temperature over the ocean in the southern hemisphere. The colorbar indicated the actual value difference bvetween emulation and simulation. Overall, Random Forest emulator tends to produce a larger difference in targeted variables, the neural network performs the best in predicting targeted variables.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># rmse</span>
+<span class="kn">from</span> <span class="nn">xskillscore</span> <span class="kn">import</span> <span class="n">rmse</span>
+<span class="c1">#weight by lat</span>
+<span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">output_ssp245</span><span class="p">[</span><span class="s1">&#39;tas&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">lat</span><span class="p">))</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="mi">144</span><span class="p">)</span><span class="o">.</span><span class="n">assign_coords</span><span class="p">(</span><span class="n">lon</span><span class="o">=</span><span class="n">output_ssp245</span><span class="o">.</span><span class="n">lon</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">global_mean</span><span class="p">(</span><span class="n">ds</span><span class="p">):</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">deg2rad</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">lat</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ds</span><span class="o">.</span><span class="n">weighted</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">])</span>
+
+<span class="n">RMSE_S</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="n">rmse</span><span class="p">(</span><span class="n">output_ssp245</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">),</span> 
+                               <span class="n">model</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">),</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">global_mean</span><span class="p">(</span><span class="n">output_ssp245</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">}</span> 
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">models</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+<span class="p">})</span>
+
+<span class="n">RMSE_G</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="n">name</span><span class="p">:</span> <span class="p">{</span><span class="n">var</span><span class="p">:</span> <span class="n">rmse</span><span class="p">(</span><span class="n">global_mean</span><span class="p">(</span><span class="n">output_ssp245</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="kc">None</span><span class="p">))),</span> 
+                                <span class="n">global_mean</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="kc">None</span><span class="p">))))</span><span class="o">.</span><span class="n">data</span><span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">global_mean</span><span class="p">(</span><span class="n">output_ssp245</span><span class="p">[</span><span class="n">var</span><span class="p">]</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2080</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">}</span> 
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">model_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">models</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+<span class="p">})</span>
+
+<span class="n">RMSE_T</span> <span class="o">=</span> <span class="n">RMSE_S</span> <span class="o">+</span> <span class="mi">5</span><span class="o">*</span><span class="n">RMSE_G</span>
+
+<span class="n">merge_rmse</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">RMSE_S</span><span class="p">,</span> <span class="n">RMSE_G</span><span class="p">,</span> <span class="n">RMSE_T</span><span class="p">],</span> <span class="n">keys</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Spatial&#39;</span><span class="p">,</span> <span class="s1">&#39;Global&#39;</span><span class="p">,</span> <span class="s1">&#39;Total&#39;</span><span class="p">])[</span><span class="n">model_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">swaplevel</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">variables</span><span class="p">]</span>
+<span class="n">merge_rmse</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">highlight_min</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">props</span><span class="o">=</span><span class="s1">&#39;font-weight: bold&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="s2">&#34;</span><span class="si">{:.3f}</span><span class="s2">&#34;</span><span class="p">)</span>
+</code></pre></div><style type="text/css">
+#T_8acd0_row0_col9, #T_8acd0_row1_col0, #T_8acd0_row1_col1, #T_8acd0_row1_col2, #T_8acd0_row1_col3, #T_8acd0_row1_col4, #T_8acd0_row1_col5, #T_8acd0_row1_col6, #T_8acd0_row1_col7, #T_8acd0_row1_col8, #T_8acd0_row1_col10, #T_8acd0_row1_col11 {
+  font-weight: bold;
+}
+</style>
+<table id="T_8acd0">
+  <thead>
+    <tr>
+      <th class="blank level0" >&nbsp;</th>
+      <th id="T_8acd0_level0_col0" class="col_heading level0 col0" colspan="3">tas</th>
+      <th id="T_8acd0_level0_col3" class="col_heading level0 col3" colspan="3">dtr</th>
+      <th id="T_8acd0_level0_col6" class="col_heading level0 col6" colspan="3">pr</th>
+      <th id="T_8acd0_level0_col9" class="col_heading level0 col9" colspan="3">pr90</th>
+    </tr>
+    <tr>
+      <th class="blank level1" >&nbsp;</th>
+      <th id="T_8acd0_level1_col0" class="col_heading level1 col0" >Spatial</th>
+      <th id="T_8acd0_level1_col1" class="col_heading level1 col1" >Global</th>
+      <th id="T_8acd0_level1_col2" class="col_heading level1 col2" >Total</th>
+      <th id="T_8acd0_level1_col3" class="col_heading level1 col3" >Spatial</th>
+      <th id="T_8acd0_level1_col4" class="col_heading level1 col4" >Global</th>
+      <th id="T_8acd0_level1_col5" class="col_heading level1 col5" >Total</th>
+      <th id="T_8acd0_level1_col6" class="col_heading level1 col6" >Spatial</th>
+      <th id="T_8acd0_level1_col7" class="col_heading level1 col7" >Global</th>
+      <th id="T_8acd0_level1_col8" class="col_heading level1 col8" >Total</th>
+      <th id="T_8acd0_level1_col9" class="col_heading level1 col9" >Spatial</th>
+      <th id="T_8acd0_level1_col10" class="col_heading level1 col10" >Global</th>
+      <th id="T_8acd0_level1_col11" class="col_heading level1 col11" >Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th id="T_8acd0_level0_row0" class="row_heading level0 row0" >Random Forest</th>
+      <td id="T_8acd0_row0_col0" class="data row0 col0" >0.108</td>
+      <td id="T_8acd0_row0_col1" class="data row0 col1" >0.058</td>
+      <td id="T_8acd0_row0_col2" class="data row0 col2" >0.400</td>
+      <td id="T_8acd0_row0_col3" class="data row0 col3" >9.195</td>
+      <td id="T_8acd0_row0_col4" class="data row0 col4" >2.652</td>
+      <td id="T_8acd0_row0_col5" class="data row0 col5" >22.457</td>
+      <td id="T_8acd0_row0_col6" class="data row0 col6" >2.524</td>
+      <td id="T_8acd0_row0_col7" class="data row0 col7" >0.502</td>
+      <td id="T_8acd0_row0_col8" class="data row0 col8" >5.035</td>
+      <td id="T_8acd0_row0_col9" class="data row0 col9" >2.682</td>
+      <td id="T_8acd0_row0_col10" class="data row0 col10" >0.543</td>
+      <td id="T_8acd0_row0_col11" class="data row0 col11" >5.399</td>
+    </tr>
+    <tr>
+      <th id="T_8acd0_level0_row1" class="row_heading level0 row1" >Neural Network</th>
+      <td id="T_8acd0_row1_col0" class="data row1 col0" >0.102</td>
+      <td id="T_8acd0_row1_col1" class="data row1 col1" >0.043</td>
+      <td id="T_8acd0_row1_col2" class="data row1 col2" >0.316</td>
+      <td id="T_8acd0_row1_col3" class="data row1 col3" >8.493</td>
+      <td id="T_8acd0_row1_col4" class="data row1 col4" >1.679</td>
+      <td id="T_8acd0_row1_col5" class="data row1 col5" >16.885</td>
+      <td id="T_8acd0_row1_col6" class="data row1 col6" >2.191</td>
+      <td id="T_8acd0_row1_col7" class="data row1 col7" >0.209</td>
+      <td id="T_8acd0_row1_col8" class="data row1 col8" >3.235</td>
+      <td id="T_8acd0_row1_col9" class="data row1 col9" >2.765</td>
+      <td id="T_8acd0_row1_col10" class="data row1 col10" >0.318</td>
+      <td id="T_8acd0_row1_col11" class="data row1 col11" >4.356</td>
+    </tr>
+  </tbody>
+</table>
+<p>The primary metrics the evaluate emulators is the normalized, global mean root-mean square error (NRMSE). It is a metric the quantify the deviation between emulated output variables and the trageted output variables in the test scenario. The smaller RMSE value is, the lesser error the emulator is produced.</p>
+<p>In the paper, they constructed spatial, global and total NRMSE in the following forms:</p>
+<p>Spatial NRMSE:
+$$NRMSE_s = \sqrt{&lt;(|x_{i,j,t}|<em>t - |y</em>{i,j,t,n}|<em>{n,t})^2&gt;} / |&lt;y</em>{i,j}&gt;|_{t,n}$$</p>
+<p>Global NRMSE:
+$$NRMSE_g = \sqrt{|(&lt;x_{i,j,t}&gt; - &lt;|y_{i,j,t,n}|<em>{n}&gt;)^2|</em>{t}} / |&lt;y_{i,j}&gt;|_{t,n}$$</p>
+<p>Total NRMSE:
+$$NRMSE_t = NRMSE_s + \alpha * NRMSE_g$$</p>
+<p>$&lt;x_{i,j}&gt;$ indicated the global mean with a weighting function that accounts for the decreasing grid-cell area toward the poles</p>
+<p>$$&lt;x_{i,j}&gt; = \frac{1}{N_{lat}N_{lon}} \sum_{i}^{N_{lat}} \sum_{j}^{N_{lon}} cos(lat(i))x_{i,j}$$</p>
+<p>$\alpha$ is a defined weight coefficient and $\alpha = 5$ in this paper.</p>
+<p>As shown in the table above, the neural network emulator seems to perform better in terms of predicting temperature and precipitation changes. In most targeted value and most metrics, the neural network emulator tends to score a smaller RMSE and has a lesser difference between its emulations and original model simulations.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="c1"># Clausius-Clapeyron relationship and energy conservation considerations</span>
+<span class="n">baseline_precip</span> <span class="o">=</span> <span class="mf">2.335</span>
+<span class="k">with</span> <span class="n">sns</span><span class="o">.</span><span class="n">plotting_context</span><span class="p">(</span><span class="s2">&#34;talk&#34;</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">model</span><span class="p">,</span> <span class="n">model_name</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">models</span><span class="p">,</span> <span class="n">model_names</span><span class="p">):</span>
+        <span class="n">smooth</span> <span class="o">=</span> <span class="n">global_mean</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">coarsen</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">boundary</span><span class="o">=</span><span class="s1">&#39;pad&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+        <span class="n">x_</span><span class="p">,</span> <span class="n">y_</span> <span class="o">=</span> <span class="n">smooth</span><span class="p">[</span><span class="s1">&#39;tas&#39;</span><span class="p">],</span> <span class="n">smooth</span><span class="p">[</span><span class="s1">&#39;pr&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">baseline_precip</span><span class="o">*</span><span class="mi">100</span>
+        <span class="n">s</span><span class="o">=</span><span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2030</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span> <span class="n">y_</span><span class="o">.</span><span class="n">sel</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="nb">slice</span><span class="p">(</span><span class="mi">2030</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span> <span class="n">label</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>   
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="mi">6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&#34;Clausius-Clapeyron (6%/K)&#34;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&#34;Energetic constraint (2%/K)&#34;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">(),</span> <span class="n">xlabel</span><span class="o">=</span><span class="s2">&#34;Temperature change (K)&#34;</span><span class="p">,</span> <span class="n">ylabel</span><span class="o">=</span><span class="s2">&#34;Precipitation change (%)&#34;</span><span class="p">,</span> <span class="n">xlim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">],</span> <span class="n">ylim</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">)</span>
+</code></pre></div><p><img loading="lazy" src="/images/ClimateBench/output_7_0.png" alt=""  />
+</p>
+<p>One common concern on applying statistical emulators on Earth system modelling is their abilities to capture and demostrate the physical relationships, whether emulators are overfitted on the existed dataset. In the paper, they try to demostrate the trustworthyness of emulator by assessing whether emulations can capture the same relationship under physical constraints. Particularly, they chose Clausius-Clapeyron relationship to assess. This relationship refers to relative change in global mean precipitation as a function of global mean temperature change. In simple atmospheric physics, Clausius-Clapeyron relationship could be explained as, as the air temperature increases, the water vapor needs more exchange of latent heat to complete a phase transition (precipitation) than previously. The atmosphere has more ability to hold water content under a higher temperature, and the atmospheric water content increases by between 6 and 7% per 1 K of temperature changes if we only consider precipitation changes in a local air mass.</p>
+<p>However, in the real Earth system, we also need to consider the energy constraints when assessing global precipitation changes. The global precipitation changes will be balanced by the radiative cooling from the cloud (<a href="https://doi.org/10.1175/JCLI-D-13-00163.1">Pendergrass &amp; Hartmann, 2013</a>) and the relative change of global precipitaion under temperature change will be around 2% per 1 K.</p>
+<p>The above figure assessed the predicted temperature changes vs relative global precipitation changes in emulations and simulations results. The slope of the red dash line indicated the ideal relationship of temperature and precipitation. The figure shows a scatter distribution of the relative changes in precipitation vs temperature, if the slope/tendency of the data close to the slope of the red line, it indicates that the changes predicted in emulations is close to the ideal physical relationship. The figure indicated that teh neural network emulator perform better in terms of capturing the physical relationship between changes in global precipitation and temperature, and its predicted relationship is close to both the ideal value and the model simulation results under targeted SSP245 scenario.</p>
+<h3 id="4-critique">4. Critique<a hidden class="anchor" aria-hidden="true" href="#4-critique">#</a></h3>
+<h4 id="41-data">4.1 Data<a hidden class="anchor" aria-hidden="true" href="#41-data">#</a></h4>
+<p>The data used in the paper to construct emulators came from validated peer-review papers and projects using Earth system modelling to perform climate projection under given future scenarios. These model simulations data are quite assessible and the quality of data is very good.</p>
+<p>However, the trained emulator and emulations results used in the paper for analysis is not provided. In order to reproduce the paper, I need to use the ML algorithm in given packages and the author&rsquo;s hyperparameters, with the same model simulation data to train the emulator myself. This created a bit of barriers in reproducing the paper. It is still possible to reproduce the paper, and the results from the paper are validated through my reproductions.</p>
+<h4 id="42-method">4.2 method<a hidden class="anchor" aria-hidden="true" href="#42-method">#</a></h4>
+<h5 id="421-emulator">4.2.1 Emulator<a hidden class="anchor" aria-hidden="true" href="#421-emulator">#</a></h5>
+<p>As the goal of this paper is to perform a benchmarking work and assess different methods to construct emulator, the selection of specific method for emulators are therefore important. In the paper, the assessed emulators are all constructed using popular and powerful machine learning method that have been applied in emulating nonlinearity relationship in the Earth system, thus made the emulators used in this research more applicable to the task.</p>
+<p>The process of contructing emulators are also following similar approaches in the given field where the relationships between emitted greenhouse gases and temperature/precipitation changes have been used to construct the emulators. The hyperpaparmeters selected for each emulator are reasonable and listed in its appendix, and the used packages are well-constructed and assessible from GitHub, which makes the reproduction processes for this paper easier.</p>
+<p>In terms of emulation itself, the emulators were employed in an interpretation problems, where a boarder range of SSPs are used in training and only one targeted SSPs (ssp245) within the range is used for testing. Using statistical/machine learning models for interpretation is a safer approach compared with for exterpolation problems, and could potentially avoid overfitting. However, the selected SSPs are of a quite small range, and the data employed in training are not fully independent. This is part of the issue from limited model simulations to explore SSPs, and also comes from the time dependent nature in the Earth system itself, where the variable in one timestep is relevant to its previous timesteps. Therefore, although the authors used several SSPs simulations and their data on different timesteps for training, the dataset are not entirely independent and might affect the emulators' results.</p>
+<h5 id="422-evaluation">4.2.2 Evaluation<a hidden class="anchor" aria-hidden="true" href="#422-evaluation">#</a></h5>
+<p>The methods used for evaluations are quite trustworthy and useful.</p>
+<p>The authors employed Student&rsquo;s T-test to assess whether there are significant difference bvetween emulations and simulations. By showing maps of differences, it is clear for readers to find out the spatial bias structures for each emulator, and potentially help deliver a better illustration for emulators' biases. In terms of specific explanation for t-test (and its normal distribution approximation), the author did not include a detailed explantion but pointed to a book of statistics. This is probably because t-test are widely used in the atmospheric science and it&rsquo;s more efficient to assume readers understand this commonn method.</p>
+<p>The RMSE metrics are a clear and straight-forward way to quantify the errors produced by emulators, which sucessfully provide a numeric value for evaluation and fulfill the gaps from spatial maps of t-test difference. However, the authors did not provide a detailed explanation for each different RMSE values they constructed, and they did not explain why they favor one contructed RMSE metrics over another. The Spatial and Global RMSE used in the paper are only differed in when to perform an average obver time dimention (before or after calculating the difference), and whether the average process neglect time variability in the selected timeframes. As the task for emulators in this paper is the prediction the targeted temperature and precipitation changes in a given period, and the time variability in the atmosphere is not the first priority in this question. Nevertheless, the explanations about different RMSE metrics used in the research could still be useful.</p>
+<p>Lastly, assessing the relative relationship between global precipitation and temperature changes is a good way to outline the ability of emulators to capture physical relationship under energy constraints. Given that the targeted outputs in the research are either precipitation or temperature, the selected relationship here is useful for examination, and it&rsquo;s smart to demonstrate this through a scatterplot which fully illustrate the relationship between 2 variables.</p>
+<h4 id="43-structure-and-layouts">4.3 Structure and layouts<a hidden class="anchor" aria-hidden="true" href="#43-structure-and-layouts">#</a></h4>
+<p>The style of the figure in the paper is quite clear and appearing, and fulfill the common requirement in scientific publication. Apart from benchmarking different emulators, the paper also carries an introduction for readers that are not specialized in emulation and calibration. Therefore, in the first half of teh paper, the authors took quite an effort to introduce to background of the research, which dataset is acquired and which emulator has been employed, and also illustrate the characteristics of the dataset with several figures. These figure are not directly used for analysis, but for introduction of the background and dataset, which may create a clearer introdution but also push the first analytic figure to Figure 4 in the paper. Therefore, in this analytic demo, I selected the useful figure for benchmarking and evaluating emulators, in a concise way. Overall, the original paper is quite informatic and provide a nice demonstration for benchmarking and evaluating selected emulators for climate projection.</p>
+<h3 id="reference">Reference<a hidden class="anchor" aria-hidden="true" href="#reference">#</a></h3>
+<ul>
+<li>Mansfield, L. A., Nowack, P. J., Kasoar, M., Everitt, R. G., Collins, W. J., &amp; Voulgarakis, A. (2020). Predicting global patterns of long-term climate change from short-term simulations using machine learning. NPJ Climate and Atmospheric Science, 3(1), 44. <a href="https://doi.org/10.1038/s41612-020-00148-5">https://doi.org/10.1038/s41612-020-00148-5</a></li>
+<li>O’Neill, B. C., Tebaldi, C., Vuuren, D. P., van Eyring, V., Friedlingstein, P., Hurtt, G., et al. (2016). The scenario model intercomparison project (ScenarioMIP) for CMIP6. Geoscientific Model Development, 9, 3461–3482. <a href="https://doi.org/10.5194/gmd-9-3461-2016">https://doi.org/10.5194/gmd-9-3461-2016</a></li>
+<li>Pendergrass, A. G., &amp; Hartmann, D. L. (2013). The atmospheric energy constraint on global-mean precipitation change. Journal of Climate, 27(2), 130916120136005. <a href="https://doi.org/10.1175/jcli-d-13-00163.1">https://doi.org/10.1175/jcli-d-13-00163.1</a></li>
+<li>Watson-Parris, D., Williams, A., Deaconu, L., &amp; Stier, P. (2021). Model calibration using ESEm v1.1.0 – an open, scalable Earth system emulator. Geoscientific Model Development, 14(12), 7659–7672. <a href="https://doi.org/10.5194/gmd-14-7659-2021">https://doi.org/10.5194/gmd-14-7659-2021</a></li>
+<li>Watson-Parris, D., Rao, Y., Olivié, D., Seland, Ø., Nowack, P., Camps-Valls, G., Stier, P., Bouabid, S., Dewey, M., Fons, E., Gonzalez, J., Harder, P., Jeggle, K., Lenhardt, J., Manshausen, P., Novitasari, M., Ricard, L., &amp; Roesch, C. (2022). ClimateBench v1.0: A Benchmark for Data-Driven Climate Projections. Journal of Advances in Modeling Earth Systems, 14(10), e2021MS002954. <a href="https://doi.org/10.1029/2021MS002954">https://doi.org/10.1029/2021MS002954</a></li>
+</ul>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="http://maanqi4.github.io/tags/python/">Python</a></li>
+      <li><a href="http://maanqi4.github.io/tags/linux/">Linux</a></li>
+      <li><a href="http://maanqi4.github.io/tags/machine-learning/">Machine Learning</a></li>
+    </ul>
+<nav class="paginav">
+  <a class="next" href="http://maanqi4.github.io/posts/cancensus/">
+    <span class="title">Next »</span>
+    <br>
+    <span>Work with Canadian Census data</span>
+  </a>
+</nav>
+
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="http://maanqi4.github.io/">Anqi Ma</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+</body>
+
+</html>

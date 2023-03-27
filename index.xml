@@ -11,7 +11,16 @@
     </image>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 15 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 27 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>[Demo] A Benchmark for Data-Driven Climate Projections</title>
+      <link>http://maanqi4.github.io/posts/climatebench/</link>
+      <pubDate>Mon, 27 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/posts/climatebench/</guid>
+      <description>Analytic Demo</description>
+    </item>
+    
     <item>
       <title>Work with Canadian Census data</title>
       <link>http://maanqi4.github.io/posts/cancensus/</link>
@@ -20,7 +29,7 @@
       <guid>http://maanqi4.github.io/posts/cancensus/</guid>
       <description>This is a course assignment demo (GG606 Scientific Data Wrangling)
   cancensus is a R package that can assess Statistics Canada Census data for Census year 1996, 2001, 2006, 2011, 2016 and 2021. The datasets present information from the Census of Population for various levels of geography, including provinces and territories, census metropolitan areas, communities and census tracts.
- 1. Installation and retrieve the data vectors list install.packages(&amp;#34;cancensus&amp;#34;) library(cancensus) #view avaliable Census data list_census_datasets() #view regions and vectors in a given dataset list_census_regions(&amp;#34;CA21&amp;#34;) list_census_vectors(&amp;#34;CA21&amp;#34;) #retrieve the data needed #Warning: Cached regions list may be out of date.</description>
+ 1. Installation and retrieve the data vectors list (API key required) install.</description>
     </item>
     
     <item>
