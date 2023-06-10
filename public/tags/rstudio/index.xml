@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>RStudio on Anqi Ma</title>
+    <link>http://maanqi4.github.io/tags/rstudio/</link>
+    <description>Recent content in RStudio on Anqi Ma</description>
+    <image>
+      <title>Anqi Ma</title>
+      <url>http://maanqi4.github.io/papermod-cover.png</url>
+      <link>http://maanqi4.github.io/papermod-cover.png</link>
+    </image>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 15 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="http://maanqi4.github.io/tags/rstudio/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Work with Canadian Census data</title>
+      <link>http://maanqi4.github.io/posts/cancensus/</link>
+      <pubDate>Wed, 15 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/posts/cancensus/</guid>
+      <description>This is a course assignment demo (GG606 Scientific Data Wrangling)
+  cancensus is a R package that can assess Statistics Canada Census data for Census year 1996, 2001, 2006, 2011, 2016 and 2021. The datasets present information from the Census of Population for various levels of geography, including provinces and territories, census metropolitan areas, communities and census tracts.
+ 1. Installation and retrieve the data vectors list (API key required) install.</description>
+    </item>
+    
+    <item>
+      <title>Earthquakes data analysis demo</title>
+      <link>http://maanqi4.github.io/posts/earthquakes/</link>
+      <pubDate>Fri, 03 Mar 2023 00:00:00 +0000</pubDate>
+      
+      <guid>http://maanqi4.github.io/posts/earthquakes/</guid>
+      <description>This is a course assignment for analyze and visualize earthquake data
+ 1. Read the data in and clean it for analysis, used the readr package functions for reading and parsing data. [5 marks] My answer is written here and is explains what I did and why.
+#code  library(tidyverse) ## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ── ## ✔ ggplot2 3.4.0 ✔ purrr 1.0.0  ## ✔ tibble 3.</description>
+    </item>
+    
+  </channel>
+</rss>
